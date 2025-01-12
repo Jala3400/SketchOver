@@ -1,12 +1,9 @@
-use pixels::{Error, Pixels, SurfaceTexture};
+use pixels::{wgpu, Error, Pixels, PixelsBuilder, SurfaceTexture};
 use winit::{
     event::{self, Event, WindowEvent},
     event_loop::EventLoop,
     window::{Window, WindowBuilder},
 };
-
-const WIDTH: u32 = 880;
-const HEIGHT: u32 = 480;
 
 struct App {
     window: Window,
@@ -18,15 +15,18 @@ fn main() -> Result<(), Error> {
     let event_loop = EventLoop::new();
     let window = WindowBuilder::new()
         .with_title("My Window")
-        .with_inner_size(winit::dpi::LogicalSize::new(WIDTH, HEIGHT))
+        .with_transparent(true)
         .build(&event_loop)
         .unwrap();
 
-    let pixels = {
         let window_size = window.inner_size();
         let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
-        Pixels::new(WIDTH, HEIGHT, surface_texture)?
-    };
+        
+        let pixels = PixelsBuilder::new(window_size.width, window_size.height, surface_texture)
+        .surface_texture_format(wgpu::TextureFormat::Bgra8UnormSrgb)
+        .clear_color(wgpu::Color::TRANSPARENT)
+        .blend_state(wgpu::BlendState::ALPHA_BLENDING)
+        .build()?;
 
     let mut app = App {
         window,
@@ -58,7 +58,7 @@ fn main() -> Result<(), Error> {
                         match button {
                             winit::event::MouseButton::Left => {
                                 let (x, y) = app.cursor_pos;
-                                change_pixel_color(&mut app, x, y);
+                                paint_pixel(&mut app, x, y);
                                 app.window.request_redraw();
                             }
                             _ => (),
@@ -76,7 +76,7 @@ fn main() -> Result<(), Error> {
     });
 }
 
-fn change_pixel_color(app: &mut App, x: f64, y: f64) {
+fn paint_pixel(app: &mut App, x: f64, y: f64) {
     let window_size = app.window.inner_size();
     let index = ((y as u32 * window_size.width + x as u32) * 4) as usize;
     let frame = app.pixels.frame_mut();
