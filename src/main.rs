@@ -9,21 +9,18 @@ struct App {
     window: Window,
     pixels: Pixels,
     cursor_pos: (f64, f64),
+    window_size: (u32, u32),
 }
 
 fn main() -> Result<(), Error> {
     let event_loop = EventLoop::new();
-    let monitor = event_loop.primary_monitor().unwrap();
-    let monitor_size = monitor.size();
     let window = WindowBuilder::new()
         .with_title("My Window")
         .with_transparent(true)
         .with_decorations(false)
-        .with_position(winit::dpi::PhysicalPosition::new(0, 0)) // Position at top-left
-        .with_inner_size(winit::dpi::PhysicalSize::new(
-            monitor_size.width,
-            monitor_size.height - 1,
-        ))
+        .with_maximized(true)
+        .with_resizable(false)
+        // .with_window_level(winit::window::WindowLevel::AlwaysOnTop)
         .build(&event_loop)
         .unwrap();
 
@@ -40,6 +37,7 @@ fn main() -> Result<(), Error> {
         window,
         pixels,
         cursor_pos: (0.0, 0.0),
+        window_size: (window_size.width, window_size.height),
     };
 
     event_loop.run(move |event, _, control_flow| {
@@ -85,11 +83,16 @@ fn main() -> Result<(), Error> {
 }
 
 fn paint_pixel(app: &mut App, x: f64, y: f64) {
-    let window_size = app.window.inner_size();
-    let index = ((y as u32 * window_size.width + x as u32) * 4) as usize;
+    let (width, height) = app.window_size;
+
+    // Bounds checking
+    if x < 0.0 || y < 0.0 || x >= width as f64 || y >= height as f64 {
+        return;
+    }
+
+    let index = ((y as u32 * width + x as u32) * 4) as usize;
     let frame = app.pixels.frame_mut();
-    frame[index] = 255; // Red
-    frame[index + 1] = 0; // Green
-    frame[index + 2] = 0; // Blue
-    frame[index + 3] = 255; // Alpha
+
+    // Write all color components at once using array slice
+    frame[index..index + 4].copy_from_slice(&[255, 0, 0, 255]);
 }
