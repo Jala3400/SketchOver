@@ -13,16 +13,24 @@ struct App {
 
 fn main() -> Result<(), Error> {
     let event_loop = EventLoop::new();
+    let monitor = event_loop.primary_monitor().unwrap();
+    let monitor_size = monitor.size();
     let window = WindowBuilder::new()
         .with_title("My Window")
         .with_transparent(true)
+        .with_decorations(false)
+        .with_position(winit::dpi::PhysicalPosition::new(0, 0)) // Position at top-left
+        .with_inner_size(winit::dpi::PhysicalSize::new(
+            monitor_size.width,
+            monitor_size.height - 1,
+        ))
         .build(&event_loop)
         .unwrap();
 
-        let window_size = window.inner_size();
-        let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
-        
-        let pixels = PixelsBuilder::new(window_size.width, window_size.height, surface_texture)
+    let window_size = window.inner_size();
+    let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
+
+    let pixels = PixelsBuilder::new(window_size.width, window_size.height, surface_texture)
         .surface_texture_format(wgpu::TextureFormat::Bgra8UnormSrgb)
         .clear_color(wgpu::Color::TRANSPARENT)
         .blend_state(wgpu::BlendState::ALPHA_BLENDING)
