@@ -10,6 +10,7 @@ fn main() -> Result<(), EventLoopError> {
 
     let _tray_icon = TrayIconBuilder::new()
         .with_tooltip("SketchOver")
+        .with_icon(tray_icon::Icon::from_path("assets/icon.ico", Some((32, 32))).unwrap())
         .build()
         .unwrap();
 
