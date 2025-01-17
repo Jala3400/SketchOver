@@ -1,8 +1,8 @@
 [package]
-name = "whiteboard_winit"
+name = "sketchover"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-winit = "0.28.0"
+winit = { version = "0.30.8", features = ["rwh_05"] }
 pixels = "0.13"
