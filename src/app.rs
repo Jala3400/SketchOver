@@ -16,6 +16,12 @@ pub struct App {
     pub window_size: (u32, u32),
 }
 
+#[derive(Debug)]
+pub enum UserEvent {
+    TrayIconEvent(tray_icon::TrayIconEvent),
+    MenuEvent(tray_icon::menu::MenuEvent),
+}
+
 impl App {
     pub fn new(attributes: WindowAttributes) -> Self {
         App {
@@ -40,7 +46,7 @@ impl App {
     }
 }
 
-impl ApplicationHandler for App {
+impl ApplicationHandler<UserEvent> for App {
     // This is a common indicator that you can create a window.
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
         self.window = Some(event_loop.create_window(self.attributes.clone()).unwrap());
