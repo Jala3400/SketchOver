@@ -31,6 +31,34 @@ impl App {
         }
     }
 
+    fn paint_line(&mut self, x0: f64, y0: f64, x1: f64, y1: f64) {
+        let dx = (x1 - x0).abs();
+        let dy = (y1 - y0).abs();
+
+        let sx = if x0 < x1 { 1.0 } else { -1.0 };
+        let sy = if y0 < y1 { 1.0 } else { -1.0 };
+
+        let mut err = dx - dy;
+        let mut x = x0;
+        let mut y = y0;
+
+        while x != x1 || y != y1 {
+            self.paint_pixel(x, y);
+
+            let e2 = 2.0 * err;
+
+            if e2 > -dy {
+                err -= dy;
+                x += sx;
+            }
+
+            if e2 < dx {
+                err += dx;
+                y += sy;
+            }
+        }
+    }
+
     fn paint_pixel(&mut self, x: f64, y: f64) {
         let (width, height) = self.window_size;
 
@@ -94,11 +122,11 @@ impl ApplicationHandler<UserEvent> for App {
                 event_loop.exit();
             }
             WindowEvent::CursorMoved { position, .. } => {
-                self.cursor_pos = (position.x, position.y);
                 if self.is_clicked {
-                    self.paint_pixel(position.x, position.y);
+                    self.paint_line(self.cursor_pos.0, self.cursor_pos.1, position.x, position.y);
                     self.window.as_ref().unwrap().request_redraw();
                 }
+                self.cursor_pos = (position.x, position.y);
             }
             WindowEvent::Resized(size) => {
                 let pixels = self.pixels.as_mut().unwrap();
