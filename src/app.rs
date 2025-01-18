@@ -9,11 +9,12 @@ use winit::{
 
 #[derive(Default)]
 pub struct App {
-    pub window: Option<Window>,
-    pub pixels: Option<Pixels>,
-    pub attributes: WindowAttributes,
-    pub cursor_pos: (f64, f64),
-    pub window_size: (u32, u32),
+    window: Option<Window>,
+    pixels: Option<Pixels>,
+    attributes: WindowAttributes,
+    cursor_pos: (f64, f64),
+    window_size: (u32, u32),
+    is_clicked: bool,
 }
 
 #[derive(Debug)]
@@ -94,6 +95,10 @@ impl ApplicationHandler<UserEvent> for App {
             }
             WindowEvent::CursorMoved { position, .. } => {
                 self.cursor_pos = (position.x, position.y);
+                if self.is_clicked {
+                    self.paint_pixel(position.x, position.y);
+                    self.window.as_ref().unwrap().request_redraw();
+                }
             }
             WindowEvent::Resized(size) => {
                 let pixels = self.pixels.as_mut().unwrap();
@@ -105,9 +110,14 @@ impl ApplicationHandler<UserEvent> for App {
                 if state == ElementState::Pressed {
                     match button {
                         MouseButton::Left => {
-                            let (x, y) = self.cursor_pos;
-                            self.paint_pixel(x, y);
-                            self.window.as_ref().unwrap().request_redraw();
+                            self.is_clicked = true;
+                        }
+                        _ => (),
+                    }
+                } else {
+                    match button {
+                        MouseButton::Left => {
+                            self.is_clicked = false;
                         }
                         _ => (),
                     }
