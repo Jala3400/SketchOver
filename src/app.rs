@@ -4,6 +4,7 @@ use winit::{
     event::{ElementState, KeyEvent, MouseButton, WindowEvent},
     event_loop::ActiveEventLoop,
     keyboard::{KeyCode, PhysicalKey},
+    monitor::MonitorHandle,
     window::{Window, WindowAttributes, WindowId},
 };
 
@@ -66,7 +67,7 @@ impl App {
         let mut x = radius;
         let mut y = 0.0;
         let mut decision = 1.0 - radius;
-    
+
         while x >= y {
             // Draw horizontal lines to fill the circle
             for i in (-x as i32)..=(x as i32) {
@@ -77,9 +78,9 @@ impl App {
                 self.paint_pixel(center_x + i as f64, center_y + x);
                 self.paint_pixel(center_x + i as f64, center_y - x);
             }
-    
+
             y += 1.0;
-    
+
             if decision <= 0.0 {
                 decision += 2.0 * y + 1.0;
             } else {
@@ -144,13 +145,48 @@ impl ApplicationHandler<UserEvent> for App {
             WindowEvent::KeyboardInput {
                 event:
                     KeyEvent {
-                        physical_key: PhysicalKey::Code(KeyCode::Escape),
+                        physical_key: PhysicalKey::Code(key_code),
+                        state,
                         ..
                     },
                 ..
             } => {
-                event_loop.exit();
+                if state == ElementState::Pressed {
+                    match key_code {
+                        KeyCode::Escape => {
+                            event_loop.exit();
+                        }
+                        KeyCode::Tab => {
+                            let current_monitor = window
+                                .current_monitor()
+                                .unwrap_or_else(|| window.primary_monitor().unwrap());
+                            let all_monitors: Vec<MonitorHandle> =
+                                window.available_monitors().collect();
+
+                            if !all_monitors.is_empty() {
+                                // Find current monitor index
+                                let current_idx = all_monitors
+                                    .iter()
+                                    .position(|m| m.name() == current_monitor.name())
+                                    .unwrap_or(0);
+
+                                // Get next monitor (wrap around to first if at end)
+                                let next_idx = (current_idx + 1) % all_monitors.len();
+                                let next_monitor = &all_monitors[next_idx];
+
+                                // First move to the desired monitor, then maximize
+                                window.set_outer_position(winit::dpi::PhysicalPosition::new(
+                                    next_monitor.position().x,
+                                    next_monitor.position().y,
+                                ));
+                                window.set_maximized(true);
+                            }
+                        }
+                        _ => (),
+                    }
+                }
             }
+
             WindowEvent::CursorMoved { position, .. } => {
                 if self.is_clicked {
                     self.paint_line(self.cursor_pos.0, self.cursor_pos.1, position.x, position.y);
