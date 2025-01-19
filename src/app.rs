@@ -15,6 +15,7 @@ pub struct App {
     cursor_pos: (f64, f64),
     window_size: (u32, u32),
     is_clicked: bool,
+    radius: f64,
 }
 
 #[derive(Debug)]
@@ -27,6 +28,7 @@ impl App {
     pub fn new(attributes: WindowAttributes) -> Self {
         App {
             attributes,
+            radius: 5.0,
             ..Default::default()
         }
     }
@@ -43,7 +45,7 @@ impl App {
         let mut y = y0;
 
         while x != x1 || y != y1 {
-            self.paint_pixel(x, y);
+            self.paint_circle(x, y);
 
             let e2 = 2.0 * err;
 
@@ -55,6 +57,34 @@ impl App {
             if e2 < dx {
                 err += dx;
                 y += sy;
+            }
+        }
+    }
+
+    fn paint_circle(&mut self, center_x: f64, center_y: f64) {
+        let radius = self.radius;
+        let mut x = radius;
+        let mut y = 0.0;
+        let mut decision = 1.0 - radius;
+    
+        while x >= y {
+            // Draw horizontal lines to fill the circle
+            for i in (-x as i32)..=(x as i32) {
+                self.paint_pixel(center_x + i as f64, center_y + y);
+                self.paint_pixel(center_x + i as f64, center_y - y);
+            }
+            for i in (-y as i32)..=(y as i32) {
+                self.paint_pixel(center_x + i as f64, center_y + x);
+                self.paint_pixel(center_x + i as f64, center_y - x);
+            }
+    
+            y += 1.0;
+    
+            if decision <= 0.0 {
+                decision += 2.0 * y + 1.0;
+            } else {
+                x -= 1.0;
+                decision += 2.0 * (y - x) + 1.0;
             }
         }
     }
@@ -139,6 +169,8 @@ impl ApplicationHandler<UserEvent> for App {
                     match button {
                         MouseButton::Left => {
                             self.is_clicked = true;
+                            self.paint_circle(self.cursor_pos.0, self.cursor_pos.1);
+                            self.window.as_ref().unwrap().request_redraw();
                         }
                         _ => (),
                     }
