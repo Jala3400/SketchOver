@@ -61,6 +61,7 @@ impl App {
                 y += sy;
             }
         }
+        self.paint_circle(x, y);
     }
 
     fn paint_circle(&mut self, center_x: f64, center_y: f64) {
@@ -146,6 +147,15 @@ impl ApplicationHandler<UserEvent> for App {
             WindowEvent::ModifiersChanged(modifiers) => {
                 self.modifiers = modifiers.state();
             }
+
+            WindowEvent::MouseWheel { delta, .. } => {
+                let delta_value = match delta {
+                    winit::event::MouseScrollDelta::LineDelta(_, y) => y as f64,
+                    winit::event::MouseScrollDelta::PixelDelta(pos) => pos.y as f64 / 50.0,
+                };
+                self.radius = (self.radius + delta_value).max(1.0).min(20.0);
+            }
+
             WindowEvent::KeyboardInput {
                 event:
                     KeyEvent {
@@ -160,11 +170,13 @@ impl ApplicationHandler<UserEvent> for App {
                         KeyCode::Escape => {
                             self.window.as_ref().unwrap().set_visible(false);
                         }
+
                         KeyCode::KeyQ => {
                             if self.modifiers == ModifiersState::CONTROL | ModifiersState::SHIFT {
                                 event_loop.exit();
                             }
                         }
+
                         KeyCode::Tab => {
                             let current_monitor = window
                                 .current_monitor()
@@ -203,12 +215,14 @@ impl ApplicationHandler<UserEvent> for App {
                 }
                 self.cursor_pos = (position.x, position.y);
             }
+
             WindowEvent::Resized(size) => {
                 let pixels = self.pixels.as_mut().unwrap();
                 let _ = pixels.resize_surface(size.width, size.height);
                 let _ = pixels.resize_buffer(size.width, size.height);
                 window.request_redraw();
             }
+
             WindowEvent::MouseInput { state, button, .. } => {
                 if state == ElementState::Pressed {
                     match button {
@@ -228,7 +242,9 @@ impl ApplicationHandler<UserEvent> for App {
                     }
                 }
             }
+
             WindowEvent::CloseRequested => event_loop.exit(),
+
             WindowEvent::RedrawRequested => {
                 self.pixels.as_ref().unwrap().render().unwrap();
             }
