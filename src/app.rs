@@ -3,7 +3,7 @@ use winit::{
     application::ApplicationHandler,
     event::{ElementState, KeyEvent, MouseButton, WindowEvent},
     event_loop::ActiveEventLoop,
-    keyboard::{KeyCode, PhysicalKey},
+    keyboard::{KeyCode, ModifiersState, PhysicalKey},
     monitor::MonitorHandle,
     window::{Window, WindowAttributes, WindowId},
 };
@@ -15,8 +15,9 @@ pub struct App {
     attributes: WindowAttributes,
     cursor_pos: (f64, f64),
     window_size: (u32, u32),
-    is_clicked: bool,
     radius: f64,
+    is_clicked: bool,
+    modifiers: winit::keyboard::ModifiersState,
 }
 
 #[derive(Debug)]
@@ -142,6 +143,9 @@ impl ApplicationHandler<UserEvent> for App {
         // Handle window event.
 
         match event {
+            WindowEvent::ModifiersChanged(modifiers) => {
+                self.modifiers = modifiers.state();
+            }
             WindowEvent::KeyboardInput {
                 event:
                     KeyEvent {
@@ -154,7 +158,12 @@ impl ApplicationHandler<UserEvent> for App {
                 if state == ElementState::Pressed {
                     match key_code {
                         KeyCode::Escape => {
-                            event_loop.exit();
+                            self.window.as_ref().unwrap().set_visible(false);
+                        }
+                        KeyCode::KeyQ => {
+                            if self.modifiers == ModifiersState::CONTROL | ModifiersState::SHIFT {
+                                event_loop.exit();
+                            }
                         }
                         KeyCode::Tab => {
                             let current_monitor = window
