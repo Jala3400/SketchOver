@@ -1,3 +1,4 @@
+use crate::cursor::custom_circle_cursor;
 use pixels::{wgpu, Pixels, PixelsBuilder, SurfaceTexture};
 use winit::{
     application::ApplicationHandler,
@@ -106,74 +107,25 @@ impl App {
         // Write all color components at once using array slice
         frame[index..index + 4].copy_from_slice(&[255, 0, 0, 255]);
     }
-}
 
-impl App {
-    pub fn update_circle_cursor(&mut self, event_loop: &ActiveEventLoop) {
-        let radius = self.radius as i32;
-        let diameter = radius * 2 + 1 as i32;
-        // Using a flat vector to store the pattern
-        let mut cursor_pattern = vec![0u8; ((diameter * diameter) * 4) as usize];
-        let hotspot_x = radius as u16;
-        let hotspot_y = radius as u16;
-
-        let mut x = radius;
-        let mut y = 0;
-        let mut decision = 1 - radius;
-
-        while x >= y {
-            // Draw horizontal lines to fill the circle
-            for i in (-x as i32)..=(x as i32) {
-                let center = radius as i32;
-                App::set_pixel(&mut cursor_pattern, center + i, center + y, diameter);
-                App::set_pixel(&mut cursor_pattern, center + i, center - y, diameter);
-            }
-            for i in (-y as i32)..=(y as i32) {
-                let center = radius as i32;
-                App::set_pixel(&mut cursor_pattern, center + i, center + x, diameter);
-                App::set_pixel(&mut cursor_pattern, center + i, center - x, diameter);
-            }
-
-            y += 1;
-
-            if decision <= 0 {
-                decision += 2 * y + 1;
-            } else {
-                x -= 1;
-                decision += 2 * (y - x) + 1;
-            }
-        }
-
-        let custom_cursor_source = winit::window::CustomCursor::from_rgba(
-            cursor_pattern,
-            diameter as u16,
-            diameter as u16,
-            hotspot_x,
-            hotspot_y,
-        )
-        .unwrap();
-
+    fn update_circle_cursor(&self, event_loop: &ActiveEventLoop) {
         self.window
             .as_ref()
             .unwrap()
-            .set_cursor(winit::window::Cursor::Custom(
-                event_loop.create_custom_cursor(custom_cursor_source),
-            ));
-    }
-
-    fn set_pixel(cursor_pattern: &mut Vec<u8>, x: i32, y: i32, diameter: i32) {
-        let idx = ((y * diameter + x) * 4) as usize;
-        cursor_pattern[idx] = 255; // R
-        cursor_pattern[idx + 1] = 0; // G
-        cursor_pattern[idx + 2] = 0; // B
-        cursor_pattern[idx + 3] = 255; // A
+            .set_cursor(winit::window::Cursor::Custom(custom_circle_cursor(
+                event_loop,
+                self.radius as i32,
+            )));
     }
 }
+
+impl App {}
 
 impl ApplicationHandler<UserEvent> for App {
     // This is a common indicator that you can create a window.
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
         self.window = Some(event_loop.create_window(self.attributes.clone()).unwrap());
+
         self.update_circle_cursor(event_loop);
 
         let window_phisical = self.window.as_ref().unwrap().inner_size();
