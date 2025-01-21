@@ -1,4 +1,4 @@
-use crate::cursor::custom_circle_cursor;
+use crate::{canvas::Canvas, cursor::custom_circle_cursor};
 use pixels::{wgpu, Pixels, PixelsBuilder, SurfaceTexture};
 use winit::{
     application::ApplicationHandler,
@@ -13,6 +13,7 @@ use winit::{
 pub struct App {
     window: Option<Window>,
     pixels: Option<Pixels>,
+    canvas: Canvas,
     attributes: WindowAttributes,
     cursor_pos: (f64, f64),
     window_size: (u32, u32),
@@ -34,78 +35,6 @@ impl App {
             radius: 2.0,
             ..Default::default()
         }
-    }
-
-    fn paint_line(&mut self, x0: f64, y0: f64, x1: f64, y1: f64) {
-        let dx = (x1 - x0).abs();
-        let dy = (y1 - y0).abs();
-
-        let sx = if x0 < x1 { 1.0 } else { -1.0 };
-        let sy = if y0 < y1 { 1.0 } else { -1.0 };
-
-        let mut err = dx - dy;
-        let mut x = x0;
-        let mut y = y0;
-
-        while x != x1 || y != y1 {
-            self.paint_circle(x, y);
-
-            let e2 = 2.0 * err;
-
-            if e2 > -dy {
-                err -= dy;
-                x += sx;
-            }
-
-            if e2 < dx {
-                err += dx;
-                y += sy;
-            }
-        }
-        self.paint_circle(x, y);
-    }
-
-    fn paint_circle(&mut self, center_x: f64, center_y: f64) {
-        let radius = self.radius;
-        let mut x = radius;
-        let mut y = 0.0;
-        let mut decision = 1.0 - radius;
-
-        while x >= y {
-            // Draw horizontal lines to fill the circle
-            for i in (-x as i32)..=(x as i32) {
-                self.paint_pixel(center_x + i as f64, center_y + y);
-                self.paint_pixel(center_x + i as f64, center_y - y);
-            }
-            for i in (-y as i32)..=(y as i32) {
-                self.paint_pixel(center_x + i as f64, center_y + x);
-                self.paint_pixel(center_x + i as f64, center_y - x);
-            }
-
-            y += 1.0;
-
-            if decision <= 0.0 {
-                decision += 2.0 * y + 1.0;
-            } else {
-                x -= 1.0;
-                decision += 2.0 * (y - x) + 1.0;
-            }
-        }
-    }
-
-    fn paint_pixel(&mut self, x: f64, y: f64) {
-        let (width, height) = self.window_size;
-
-        // Bounds checking
-        if x < 0.0 || y < 0.0 || x >= width as f64 || y >= height as f64 {
-            return;
-        }
-
-        let index = ((y as u32 * width + x as u32) * 4) as usize;
-        let frame = self.pixels.as_mut().unwrap().frame_mut();
-
-        // Write all color components at once using array slice
-        frame[index..index + 4].copy_from_slice(&[255, 0, 0, 255]);
     }
 
     fn update_circle_cursor(&self, event_loop: &ActiveEventLoop) {
@@ -130,6 +59,7 @@ impl ApplicationHandler<UserEvent> for App {
 
         let window_phisical = self.window.as_ref().unwrap().inner_size();
         self.window_size = (window_phisical.width, window_phisical.height);
+        self.canvas = Canvas::new(self.window_size);
 
         let surface_texture = SurfaceTexture::new(
             self.window_size.0,
@@ -226,7 +156,13 @@ impl ApplicationHandler<UserEvent> for App {
 
             WindowEvent::CursorMoved { position, .. } => {
                 if self.is_clicked {
-                    self.paint_line(self.cursor_pos.0, self.cursor_pos.1, position.x, position.y);
+                    self.canvas.paint_line(
+                        self.cursor_pos.0,
+                        self.cursor_pos.1,
+                        position.x,
+                        position.y,
+                        self.radius,
+                    );
                     self.window.as_ref().unwrap().request_redraw();
                 }
                 self.cursor_pos = (position.x, position.y);
@@ -244,7 +180,11 @@ impl ApplicationHandler<UserEvent> for App {
                     match button {
                         MouseButton::Left => {
                             self.is_clicked = true;
-                            self.paint_circle(self.cursor_pos.0, self.cursor_pos.1);
+                            self.canvas.paint_circle(
+                                self.cursor_pos.0,
+                                self.cursor_pos.1,
+                                self.radius,
+                            );
                             self.window.as_ref().unwrap().request_redraw();
                         }
                         _ => (),
@@ -262,7 +202,14 @@ impl ApplicationHandler<UserEvent> for App {
             WindowEvent::CloseRequested => event_loop.exit(),
 
             WindowEvent::RedrawRequested => {
-                self.pixels.as_ref().unwrap().render().unwrap();
+                let pixels = self.pixels.as_mut().unwrap();
+                let frame = pixels.frame_mut();
+
+                // Copy canvas buffer into pixels frame
+                frame.copy_from_slice(self.canvas.buffer());
+
+                // Render the frame
+                pixels.render().unwrap();
             }
             _ => (),
         }
