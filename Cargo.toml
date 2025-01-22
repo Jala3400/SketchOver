@@ -8,3 +8,4 @@ winit = { version = "0.30.8", features = ["rwh_05"] }
 pixels = "0.13"
 tray-icon = "0.19.2"
 global-hotkey = "0.6.3"
+mouse_position = "0.1.4"

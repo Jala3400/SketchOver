@@ -1,6 +1,7 @@
 use crate::hotkeys::HotkeyEvent;
 
 use super::{App, UserEvent};
+use mouse_position::mouse_position::Mouse;
 use winit::event_loop::ActiveEventLoop;
 
 impl App {
@@ -36,11 +37,18 @@ impl App {
                     .hotkey_manager
                     .as_ref()
                     .unwrap()
-                    .get_hotkey_action(&event);
+                    .get_hotkey_event(&event);
 
                 // Then execute the action
                 match hotkey_event {
-                    HotkeyEvent::Show => self.set_window_visibility(true),
+                    HotkeyEvent::Show => {
+                        let position = Mouse::get_mouse_position();
+                        if let Mouse::Position { x, y } = position {
+                            self.set_window_monitor_from_cursor(x, y);
+                        }
+
+                        self.set_window_visibility(true);
+                    }
                 }
             }
         }

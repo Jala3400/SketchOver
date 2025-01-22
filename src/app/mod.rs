@@ -62,6 +62,21 @@ impl App {
             window.set_visible(visible);
         }
     }
+
+    pub fn set_window_monitor_from_cursor(&self, x: i32, y: i32) {
+        if let Some(window) = &self.window {
+            let monitor = window.available_monitors().find(|monitor| {
+                let position = monitor.position();
+                let size = monitor.size();
+                x >= position.x
+                    && x <= position.x + size.width as i32
+                    && y >= position.y
+                    && y <= position.y + size.height as i32
+            });
+
+            window.set_fullscreen(Some(winit::window::Fullscreen::Borderless(monitor)));
+        }
+    }
 }
 
 impl Drop for App {

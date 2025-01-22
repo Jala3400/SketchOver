@@ -62,7 +62,7 @@ impl HotkeyManager {
         Self { manager, hotkeys }
     }
 
-    pub fn get_hotkey_action(&self, event: &GlobalHotKeyEvent) -> &HotkeyEvent {
+    pub fn get_hotkey_event(&self, event: &GlobalHotKeyEvent) -> &HotkeyEvent {
         &self
             .hotkeys
             .iter()
