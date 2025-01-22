@@ -41,7 +41,6 @@ impl App {
                 // Then execute the action
                 match hotkey_event {
                     HotkeyEvent::Show => self.set_window_visibility(true),
-                    HotkeyEvent::Hide => self.set_window_visibility(false),
                 }
             }
         }

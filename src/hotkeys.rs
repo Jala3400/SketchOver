@@ -13,7 +13,6 @@ struct HotkeyAction {
 
 pub enum HotkeyEvent {
     Show,
-    Hide,
 }
 
 impl HotkeyAction {
@@ -35,21 +34,14 @@ pub struct HotkeyManager {
 impl HotkeyManager {
     pub fn new(proxy: &winit::event_loop::EventLoopProxy<UserEvent>) -> Self {
         let manager = GlobalHotKeyManager::new().unwrap();
-        let mut hotkeys = Vec::new();
+        let mut hotkeys = Vec::with_capacity(1);
 
         // Define all hotkeys
-        let possible_hotkeys = vec![
-            HotkeyAction::new(
-                "Show".to_string(),
-                HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyS),
-                HotkeyEvent::Show,
-            ),
-            HotkeyAction::new(
-                "Hide".to_string(),
-                HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyH),
-                HotkeyEvent::Hide,
-            ),
-        ];
+        let possible_hotkeys = vec![HotkeyAction::new(
+            "Show".to_string(),
+            HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyS),
+            HotkeyEvent::Show,
+        )];
 
         // Register all hotkeys
         for hotkey in possible_hotkeys {
