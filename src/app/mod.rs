@@ -1,4 +1,4 @@
-use crate::{canvas::Canvas, cursor::custom_circle_cursor};
+use crate::{canvas::Canvas, cursor::custom_circle_cursor, hotkeys::HotkeyManager};
 use global_hotkey::GlobalHotKeyEvent;
 use pixels::Pixels;
 use winit::{
@@ -22,6 +22,7 @@ pub struct App {
     window: Option<Window>,
     pixels: Option<Pixels>,
     canvas: Canvas,
+    hotkey_manager: Option<HotkeyManager>,
     attributes: WindowAttributes,
     cursor_pos: (f64, f64),
     window_size: (u32, u32),
@@ -31,11 +32,18 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(attributes: WindowAttributes) -> Self {
+    pub fn new(attributes: WindowAttributes, hotkey_manager: HotkeyManager) -> Self {
         App {
+            window: None,
+            pixels: None,
+            canvas: Canvas::default(),
+            hotkey_manager: Some(hotkey_manager),
             attributes,
+            cursor_pos: (0.0, 0.0),
+            window_size: (0, 0),
             radius: 2.0,
-            ..Default::default()
+            is_clicked: false,
+            modifiers: winit::keyboard::ModifiersState::empty(),
         }
     }
 
@@ -47,5 +55,19 @@ impl App {
                 event_loop,
                 self.radius as i32,
             )));
+    }
+
+    pub fn set_window_visibility(&self, visible: bool) {
+        if let Some(window) = &self.window {
+            window.set_visible(visible);
+        }
+    }
+}
+
+impl Drop for App {
+    fn drop(&mut self) {
+        if let Some(hotkey_manager) = &self.hotkey_manager {
+            hotkey_manager.unregister_all();
+        }
     }
 }

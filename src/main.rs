@@ -1,6 +1,6 @@
 use sketchover::{
     app::{App, UserEvent},
-    hotkeys::setup_hotkeys,
+    hotkeys::HotkeyManager,
     tray_icon::setup_tray_icon,
 };
 use winit::{
@@ -14,7 +14,7 @@ fn main() -> Result<(), EventLoopError> {
 
     let _tray_icon = setup_tray_icon(&proxy);
 
-    let _manager = setup_hotkeys(&proxy);
+    let hotkey_manager = HotkeyManager::new(&proxy);
 
     let attributes = WindowAttributes::default()
         .with_title("My Window")
@@ -26,7 +26,7 @@ fn main() -> Result<(), EventLoopError> {
         .with_visible(false)
         .with_window_level(winit::window::WindowLevel::AlwaysOnTop);
 
-    let mut app = App::new(attributes);
+    let mut app = App::new(attributes, hotkey_manager);
 
     event_loop.run_app(&mut app)
 }

@@ -1,3 +1,5 @@
+use crate::hotkeys::HotkeyEvent;
+
 use super::{App, UserEvent};
 use winit::event_loop::ActiveEventLoop;
 
@@ -29,7 +31,18 @@ impl App {
                 _ => (),
             },
             UserEvent::HotkeyEvent(event) => {
-                println!("Hotkey event: {:?}", event);
+                // First get the action name without borrowing self
+                let hotkey_event = self
+                    .hotkey_manager
+                    .as_ref()
+                    .unwrap()
+                    .get_hotkey_action(&event);
+
+                // Then execute the action
+                match hotkey_event {
+                    HotkeyEvent::Show => self.set_window_visibility(true),
+                    HotkeyEvent::Hide => self.set_window_visibility(false),
+                }
             }
         }
     }
