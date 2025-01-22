@@ -28,6 +28,9 @@ impl App {
                 }
                 _ => (),
             },
+            UserEvent::HotkeyEvent(event) => {
+                println!("Hotkey event: {:?}", event);
+            }
         }
     }
 }

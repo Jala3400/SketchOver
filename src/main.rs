@@ -1,5 +1,6 @@
 use sketchover::{
     app::{App, UserEvent},
+    hotkeys::setup_hotkeys,
     tray_icon::setup_tray_icon,
 };
 use winit::{
@@ -9,8 +10,11 @@ use winit::{
 
 fn main() -> Result<(), EventLoopError> {
     let event_loop = EventLoop::<UserEvent>::with_user_event().build().unwrap();
+    let proxy = event_loop.create_proxy();
 
-    let _tray_icon = setup_tray_icon(&event_loop);
+    let _tray_icon = setup_tray_icon(&proxy);
+
+    let _manager = setup_hotkeys(&proxy);
 
     let attributes = WindowAttributes::default()
         .with_title("My Window")

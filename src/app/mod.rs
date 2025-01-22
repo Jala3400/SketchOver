@@ -1,4 +1,5 @@
 use crate::{canvas::Canvas, cursor::custom_circle_cursor};
+use global_hotkey::GlobalHotKeyEvent;
 use pixels::Pixels;
 use winit::{
     event_loop::ActiveEventLoop,
@@ -13,6 +14,7 @@ mod window_event;
 pub enum UserEvent {
     TrayIconEvent(tray_icon::TrayIconEvent),
     MenuEvent(tray_icon::menu::MenuEvent),
+    HotkeyEvent(GlobalHotKeyEvent),
 }
 
 #[derive(Default)]
