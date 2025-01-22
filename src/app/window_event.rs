@@ -1,83 +1,14 @@
-use crate::{canvas::Canvas, cursor::custom_circle_cursor};
-use pixels::{wgpu, Pixels, PixelsBuilder, SurfaceTexture};
+use super::App;
 use winit::{
-    application::ApplicationHandler,
     event::{ElementState, KeyEvent, MouseButton, WindowEvent},
     event_loop::ActiveEventLoop,
     keyboard::{KeyCode, ModifiersState, PhysicalKey},
     monitor::MonitorHandle,
-    window::{Window, WindowAttributes, WindowId},
+    window::WindowId,
 };
 
-#[derive(Default)]
-pub struct App {
-    window: Option<Window>,
-    pixels: Option<Pixels>,
-    canvas: Canvas,
-    attributes: WindowAttributes,
-    cursor_pos: (f64, f64),
-    window_size: (u32, u32),
-    radius: f64,
-    is_clicked: bool,
-    modifiers: winit::keyboard::ModifiersState,
-}
-
-#[derive(Debug)]
-pub enum UserEvent {
-    TrayIconEvent(tray_icon::TrayIconEvent),
-    MenuEvent(tray_icon::menu::MenuEvent),
-}
-
 impl App {
-    pub fn new(attributes: WindowAttributes) -> Self {
-        App {
-            attributes,
-            radius: 2.0,
-            ..Default::default()
-        }
-    }
-
-    fn update_circle_cursor(&self, event_loop: &ActiveEventLoop) {
-        self.window
-            .as_ref()
-            .unwrap()
-            .set_cursor(winit::window::Cursor::Custom(custom_circle_cursor(
-                event_loop,
-                self.radius as i32,
-            )));
-    }
-}
-
-impl App {}
-
-impl ApplicationHandler<UserEvent> for App {
-    // This is a common indicator that you can create a window.
-    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        self.window = Some(event_loop.create_window(self.attributes.clone()).unwrap());
-
-        self.update_circle_cursor(event_loop);
-
-        let window_phisical = self.window.as_ref().unwrap().inner_size();
-        self.window_size = (window_phisical.width, window_phisical.height);
-        self.canvas = Canvas::new(self.window_size);
-
-        let surface_texture = SurfaceTexture::new(
-            self.window_size.0,
-            self.window_size.1,
-            self.window.as_ref().unwrap(),
-        );
-
-        self.pixels = Some(
-            PixelsBuilder::new(self.window_size.0, self.window_size.1, surface_texture)
-                .surface_texture_format(wgpu::TextureFormat::Bgra8UnormSrgb)
-                .clear_color(wgpu::Color::TRANSPARENT)
-                .blend_state(wgpu::BlendState::ALPHA_BLENDING)
-                .build()
-                .unwrap(),
-        );
-    }
-
-    fn window_event(
+    pub fn window_event_func(
         &mut self,
         event_loop: &ActiveEventLoop,
         _window_id: WindowId,
@@ -212,35 +143,6 @@ impl ApplicationHandler<UserEvent> for App {
                 pixels.render().unwrap();
             }
             _ => (),
-        }
-    }
-
-    fn user_event(&mut self, _event_loop: &ActiveEventLoop, event: UserEvent) {
-        match event {
-            UserEvent::TrayIconEvent(_event) => match _event {
-                tray_icon::TrayIconEvent::DoubleClick {
-                    id: _,
-                    position: _,
-                    rect: _,
-                    button: _,
-                } => {
-                    let window = self.window.as_ref().unwrap();
-                    window.set_visible(!window.is_visible().unwrap_or(true));
-                }
-                _ => (),
-            },
-            UserEvent::MenuEvent(event) => match event.id.0.as_str() {
-                "Show" => {
-                    self.window.as_ref().unwrap().set_visible(true);
-                }
-                "Hide" => {
-                    self.window.as_ref().unwrap().set_visible(false);
-                }
-                "Exit" => {
-                    _event_loop.exit();
-                }
-                _ => (),
-            },
         }
     }
 }
