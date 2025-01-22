@@ -82,6 +82,10 @@ impl Canvas {
         self.buffer[index..index + 4].copy_from_slice(&[255, 0, 0, 255]);
     }
 
+    pub fn clear(&mut self) {
+        self.buffer.iter_mut().for_each(|x| *x = 0);
+    }
+
     pub fn buffer(&self) -> &[u8] {
         &self.buffer
     }

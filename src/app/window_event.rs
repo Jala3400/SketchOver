@@ -99,10 +99,8 @@ impl App {
                 self.cursor_pos = (position.x, position.y);
             }
 
-            WindowEvent::Resized(size) => {
-                let pixels = self.pixels.as_mut().unwrap();
-                let _ = pixels.resize_surface(size.width, size.height);
-                let _ = pixels.resize_buffer(size.width, size.height);
+            WindowEvent::Resized(_) => {
+                self.canvas.clear();
                 window.request_redraw();
             }
 
