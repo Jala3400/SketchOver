@@ -44,6 +44,9 @@ impl App {
                         self.canvas.clear();
                         self.show_window_in_current_monitor();
                     }
+                    HotkeyEvent::ShowPreserve => {
+                        self.show_window_in_current_monitor();
+                    }
                 }
             }
         }

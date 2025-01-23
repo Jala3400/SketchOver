@@ -13,6 +13,7 @@ struct HotkeyAction {
 
 pub enum HotkeyEvent {
     Show,
+    ShowPreserve,
 }
 
 impl HotkeyAction {
@@ -37,11 +38,21 @@ impl HotkeyManager {
         let mut hotkeys = Vec::with_capacity(1);
 
         // Define all hotkeys
-        let possible_hotkeys = vec![HotkeyAction::new(
-            "Show".to_string(),
-            HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyS),
-            HotkeyEvent::Show,
-        )];
+        let possible_hotkeys = vec![
+            HotkeyAction::new(
+                "Show".to_string(),
+                HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyS),
+                HotkeyEvent::Show,
+            ),
+            HotkeyAction::new(
+                "ShowPreserved".to_string(),
+                HotKey::new(
+                    Some(Modifiers::CONTROL | Modifiers::ALT | Modifiers::SHIFT),
+                    Code::KeyS,
+                ),
+                HotkeyEvent::ShowPreserve,
+            ),
+        ];
 
         // Register all hotkeys
         for hotkey in possible_hotkeys {
