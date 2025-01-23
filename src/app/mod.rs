@@ -1,5 +1,6 @@
 use crate::{canvas::Canvas, cursor::custom_circle_cursor, hotkeys::HotkeyManager};
 use global_hotkey::GlobalHotKeyEvent;
+use mouse_position::mouse_position::Mouse;
 use pixels::Pixels;
 use winit::{
     event_loop::ActiveEventLoop,
@@ -61,6 +62,15 @@ impl App {
         if let Some(window) = &self.window {
             window.set_visible(visible);
         }
+    }
+
+    pub fn show_window_in_current_monitor(&self) {
+        let position = Mouse::get_mouse_position();
+        if let Mouse::Position { x, y } = position {
+            self.set_window_monitor_from_cursor(x, y);
+        }
+
+        self.set_window_visibility(true);
     }
 
     pub fn set_window_monitor_from_cursor(&self, x: i32, y: i32) {
