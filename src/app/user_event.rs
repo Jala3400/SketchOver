@@ -32,11 +32,7 @@ impl App {
             },
             UserEvent::HotkeyEvent(event) => {
                 // First get the action name without borrowing self
-                let hotkey_event = self
-                    .hotkey_manager
-                    .as_ref()
-                    .unwrap()
-                    .get_hotkey_event(&event);
+                let hotkey_event = self.hotkey_manager.get_hotkey_event(&event);
 
                 // Then execute the action
                 match hotkey_event {

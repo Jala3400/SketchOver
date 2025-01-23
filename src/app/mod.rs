@@ -1,9 +1,13 @@
-use crate::{canvas::Canvas, cursor::custom_circle_cursor, hotkeys::HotkeyManager};
+use crate::{
+    canvas::Canvas, cursor::custom_circle_cursor, hotkeys::HotkeyManager,
+    tray_icon::setup_tray_icon,
+};
 use global_hotkey::GlobalHotKeyEvent;
 use mouse_position::mouse_position::Mouse;
 use pixels::Pixels;
 use winit::{
-    event_loop::ActiveEventLoop,
+    event_loop::{ActiveEventLoop, EventLoopProxy},
+    platform::windows::WindowAttributesExtWindows,
     window::{Window, WindowAttributes},
 };
 mod app_handler;
@@ -18,12 +22,13 @@ pub enum UserEvent {
     HotkeyEvent(GlobalHotKeyEvent),
 }
 
-#[derive(Default)]
 pub struct App {
     window: Option<Window>,
     pixels: Option<Pixels>,
     canvas: Canvas,
-    hotkey_manager: Option<HotkeyManager>,
+    _tray_icon: tray_icon::TrayIcon,
+    hotkey_manager: HotkeyManager,
+    _proxy: EventLoopProxy<UserEvent>,
     attributes: WindowAttributes,
     cursor_pos: (f64, f64),
     window_size: (u32, u32),
@@ -33,13 +38,22 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(attributes: WindowAttributes, hotkey_manager: HotkeyManager) -> Self {
+    pub fn new(proxy: EventLoopProxy<UserEvent>) -> Self {
         App {
             window: None,
             pixels: None,
             canvas: Canvas::default(),
-            hotkey_manager: Some(hotkey_manager),
-            attributes,
+            hotkey_manager: HotkeyManager::new(&proxy),
+            _tray_icon: setup_tray_icon(&proxy),
+            _proxy: proxy,
+            attributes: WindowAttributes::default()
+                .with_title("My Window")
+                .with_transparent(true)
+                .with_decorations(false)
+                .with_resizable(false)
+                .with_skip_taskbar(true)
+                .with_visible(false)
+                .with_window_level(winit::window::WindowLevel::AlwaysOnTop),
             cursor_pos: (0.0, 0.0),
             window_size: (0, 0),
             radius: 2.0,
@@ -91,8 +105,6 @@ impl App {
 
 impl Drop for App {
     fn drop(&mut self) {
-        if let Some(hotkey_manager) = &self.hotkey_manager {
-            hotkey_manager.unregister_all();
-        }
+        self.hotkey_manager.unregister_all();
     }
 }
