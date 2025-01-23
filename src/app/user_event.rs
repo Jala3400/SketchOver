@@ -41,6 +41,7 @@ impl App {
                 // Then execute the action
                 match hotkey_event {
                     HotkeyEvent::Show => {
+                        self.canvas.clear();
                         self.show_window_in_current_monitor();
                     }
                 }
