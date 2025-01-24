@@ -1,13 +1,18 @@
-#[derive(Default)]
+use softbuffer::Surface;
+use std::rc::Rc;
+use winit::window::Window;
+
 pub struct Canvas {
-    pub buffer: Vec<u32>,
-    pub window_size: (i32, i32),
+    drawing: Vec<u32>,
+    surface: Surface<Rc<Window>, Rc<Window>>,
+    window_size: (i32, i32),
 }
 
 impl Canvas {
-    pub fn new(window_size: (i32, i32)) -> Canvas {
+    pub fn new(surface: Surface<Rc<Window>, Rc<Window>>, window_size: (i32, i32)) -> Canvas {
         Canvas {
-            buffer: vec![0; (window_size.0 * window_size.1) as usize],
+            drawing: vec![0; (window_size.0 * window_size.1) as usize],
+            surface: surface,
             window_size,
         }
     }
@@ -70,13 +75,16 @@ impl Canvas {
         let (width, height) = self.window_size;
 
         // Bounds checking
-        if x < 0 || y < 0 || x >= width as i32 || y >= height as i32 {
+        if x < 0 || y < 0 || x >= width || y >= height {
             return;
         }
 
         let index = (y * width + x) as usize;
         // Transparency goes first
-        self.buffer[index] = 0xffff0000;
+        let color = 0xffff0000;
+        self.drawing[index] = color;
+        let mut buffer = self.surface.buffer_mut().unwrap();
+        buffer[index] = color;
     }
 
     pub fn resize(&mut self, width: i32, height: i32) {
@@ -86,18 +94,38 @@ impl Canvas {
         for y in 0..height.min(old_height) {
             let old_row_start = (y * old_width) as usize;
             let new_row_start = (y * width) as usize;
-            new_buffer[new_row_start] = self.buffer[old_row_start];
+            let old_pixel = self.drawing[old_row_start];
+            new_buffer[new_row_start] = old_pixel;
+            if let Ok(mut buffer) = self.surface.buffer_mut() {
+                buffer[new_row_start] = old_pixel;
+            }
         }
 
-        self.buffer = new_buffer;
+        let width_n = std::num::NonZeroU32::new(width as u32).unwrap();
+        let height_n = std::num::NonZeroU32::new(height as u32).unwrap();
+        let _ = self.surface.resize(width_n, height_n);
+
+        self.drawing = new_buffer;
         self.window_size = (width, height);
     }
 
     pub fn clear(&mut self) {
-        self.buffer.iter_mut().for_each(|x| *x = 0);
+        self.drawing.iter_mut().for_each(|x| *x = 0);
+        let mut buffer = self.surface.buffer_mut().unwrap();
+        buffer.iter_mut().for_each(|x| *x = 0);
+    }
+
+    pub fn redraw(&mut self) {
+        let buffer = self.surface.buffer_mut().unwrap();
+
+        // Copy canvas buffer into pixels frame
+        // buffer.copy_from_slice(self.canvas.buffer());
+
+        // Render the frame
+        let _ = buffer.present();
     }
 
     pub fn buffer(&self) -> &[u32] {
-        &self.buffer
+        &self.drawing
     }
 }

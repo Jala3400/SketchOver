@@ -82,7 +82,7 @@ impl App {
 
             WindowEvent::CursorMoved { position, .. } => {
                 if self.is_clicked {
-                    self.canvas.paint_line(
+                    self.canvas.as_mut().unwrap().paint_line(
                         self.cursor_pos.0,
                         self.cursor_pos.1,
                         position.x as i32,
@@ -95,16 +95,10 @@ impl App {
             }
 
             WindowEvent::Resized(size) => {
-                let custom_size = (size.width as i32, size.height as i32);
-                self.window_size = (custom_size.0, custom_size.1);
-                self.canvas.resize(custom_size.0, custom_size.1);
-                if let Some(surface) = self.surface.as_mut() {
-                    let width =
-                        std::num::NonZeroU32::new(custom_size.0.try_into().unwrap_or(1)).unwrap();
-                    let height =
-                        std::num::NonZeroU32::new(custom_size.1.try_into().unwrap_or(1)).unwrap();
-                    let _ = surface.resize(width, height);
-                }
+                self.canvas
+                    .as_mut()
+                    .unwrap()
+                    .resize(size.width as i32, size.height as i32);
                 window.request_redraw();
             }
 
@@ -113,7 +107,7 @@ impl App {
                     match button {
                         MouseButton::Left => {
                             self.is_clicked = true;
-                            self.canvas.paint_circle(
+                            self.canvas.as_mut().unwrap().paint_circle(
                                 self.cursor_pos.0 as i32,
                                 self.cursor_pos.1 as i32,
                                 self.radius as i32,
@@ -135,15 +129,7 @@ impl App {
             WindowEvent::CloseRequested => event_loop.exit(),
 
             WindowEvent::RedrawRequested => {
-                if let Some(surface) = self.surface.as_mut() {
-                    let mut buffer = surface.buffer_mut().unwrap();
-
-                    // Copy canvas buffer into pixels frame
-                    buffer.copy_from_slice(self.canvas.buffer());
-
-                    // Render the frame
-                    let _ = buffer.present();
-                }
+                self.canvas.as_mut().unwrap().redraw();
             }
             _ => (),
         }

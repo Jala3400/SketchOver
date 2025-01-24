@@ -23,8 +23,6 @@ impl App {
 
         let window_phisical = self.window.as_ref().unwrap().inner_size();
         self.window_size = (window_phisical.width as i32, window_phisical.height as i32);
-        self.canvas = Canvas::new(self.window_size);
-
-        self.surface = Some(surface);
+        self.canvas = Some(Canvas::new(surface, self.window_size));
     }
 }

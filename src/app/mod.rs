@@ -1,12 +1,10 @@
-use std::rc::Rc;
-
 use crate::{
     canvas::Canvas, cursor::custom_circle_cursor, hotkeys::HotkeyManager,
     tray_icon::setup_tray_icon,
 };
 use global_hotkey::GlobalHotKeyEvent;
 use mouse_position::mouse_position::Mouse;
-use softbuffer::Surface;
+use std::rc::Rc;
 use winit::{
     event_loop::{ActiveEventLoop, EventLoopProxy},
     platform::windows::WindowAttributesExtWindows,
@@ -26,8 +24,7 @@ pub enum UserEvent {
 
 pub struct App {
     window: Option<Rc<Window>>,
-    surface: Option<Surface<Rc<Window>, Rc<Window>>>,
-    canvas: Canvas,
+    canvas: Option<Canvas>,
     _tray_icon: tray_icon::TrayIcon,
     hotkey_manager: HotkeyManager,
     _proxy: EventLoopProxy<UserEvent>,
@@ -43,8 +40,7 @@ impl App {
     pub fn new(proxy: EventLoopProxy<UserEvent>) -> Self {
         App {
             window: None,
-            surface: None,
-            canvas: Canvas::default(),
+            canvas: None,
             hotkey_manager: HotkeyManager::new(&proxy),
             _tray_icon: setup_tray_icon(&proxy),
             _proxy: proxy,
