@@ -1,13 +1,13 @@
 #[derive(Default)]
 pub struct Canvas {
-    pub buffer: Vec<u8>,
+    pub buffer: Vec<u32>,
     pub window_size: (i32, i32),
 }
 
 impl Canvas {
     pub fn new(window_size: (i32, i32)) -> Canvas {
         Canvas {
-            buffer: vec![0; (window_size.0 * window_size.1 * 4) as usize],
+            buffer: vec![0; (window_size.0 * window_size.1) as usize],
             window_size,
         }
     }
@@ -74,20 +74,19 @@ impl Canvas {
             return;
         }
 
-        let index = ((y * width + x) * 4) as usize;
-        self.buffer[index..index + 4].copy_from_slice(&[255, 0, 0, 255]);
+        let index = (y * width + x) as usize;
+        // Transparency goes first
+        self.buffer[index] = 0xffff0000;
     }
 
     pub fn resize(&mut self, width: i32, height: i32) {
-        let mut new_buffer = vec![0; (width * height * 4) as usize];
+        let mut new_buffer = vec![0; (width * height) as usize];
         let (old_width, old_height) = self.window_size;
 
         for y in 0..height.min(old_height) {
-            let old_row_start = (y * old_width * 4) as usize;
-            let new_row_start = (y * width * 4) as usize;
-            let row_width = width.min(old_width) * 4;
-            new_buffer[new_row_start..new_row_start + row_width as usize]
-                .copy_from_slice(&self.buffer[old_row_start..old_row_start + row_width as usize]);
+            let old_row_start = (y * old_width) as usize;
+            let new_row_start = (y * width) as usize;
+            new_buffer[new_row_start] = self.buffer[old_row_start];
         }
 
         self.buffer = new_buffer;
@@ -98,7 +97,7 @@ impl Canvas {
         self.buffer.iter_mut().for_each(|x| *x = 0);
     }
 
-    pub fn buffer(&self) -> &[u8] {
+    pub fn buffer(&self) -> &[u32] {
         &self.buffer
     }
 }

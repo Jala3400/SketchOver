@@ -98,16 +98,13 @@ impl App {
                 let custom_size = (size.width as i32, size.height as i32);
                 self.window_size = (custom_size.0, custom_size.1);
                 self.canvas.resize(custom_size.0, custom_size.1);
-                let _ = self
-                    .pixels
-                    .as_mut()
-                    .unwrap()
-                    .resize_surface(size.width, size.height);
-                let _ = self
-                    .pixels
-                    .as_mut()
-                    .unwrap()
-                    .resize_buffer(size.width, size.height);
+                if let Some(surface) = self.surface.as_mut() {
+                    let width =
+                        std::num::NonZeroU32::new(custom_size.0.try_into().unwrap_or(1)).unwrap();
+                    let height =
+                        std::num::NonZeroU32::new(custom_size.1.try_into().unwrap_or(1)).unwrap();
+                    let _ = surface.resize(width, height);
+                }
                 window.request_redraw();
             }
 
@@ -138,14 +135,15 @@ impl App {
             WindowEvent::CloseRequested => event_loop.exit(),
 
             WindowEvent::RedrawRequested => {
-                let pixels = self.pixels.as_mut().unwrap();
-                let frame = pixels.frame_mut();
+                if let Some(surface) = self.surface.as_mut() {
+                    let mut buffer = surface.buffer_mut().unwrap();
 
-                // Copy canvas buffer into pixels frame
-                frame.copy_from_slice(self.canvas.buffer());
+                    // Copy canvas buffer into pixels frame
+                    buffer.copy_from_slice(self.canvas.buffer());
 
-                // Render the frame
-                pixels.render().unwrap();
+                    // Render the frame
+                    let _ = buffer.present();
+                }
             }
             _ => (),
         }
