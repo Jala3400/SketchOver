@@ -97,6 +97,17 @@ impl App {
             WindowEvent::Resized(_) => {
                 let size = window.inner_size();
                 self.window_size = (size.width, size.height);
+                self.canvas.resize(size.width, size.height);
+                let _ = self
+                    .pixels
+                    .as_mut()
+                    .unwrap()
+                    .resize_surface(size.width, size.height);
+                let _ = self
+                    .pixels
+                    .as_mut()
+                    .unwrap()
+                    .resize_buffer(size.width, size.height);
                 window.request_redraw();
             }
 

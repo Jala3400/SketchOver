@@ -82,6 +82,22 @@ impl Canvas {
         self.buffer[index..index + 4].copy_from_slice(&[255, 0, 0, 255]);
     }
 
+    pub fn resize(&mut self, width: u32, height: u32) {
+        let mut new_buffer = vec![0; (width * height * 4) as usize];
+        let (old_width, old_height) = self.window_size;
+
+        for y in 0..height.min(old_height) {
+            let old_row_start = (y * old_width * 4) as usize;
+            let new_row_start = (y * width * 4) as usize;
+            let row_width = width.min(old_width) * 4;
+            new_buffer[new_row_start..new_row_start + row_width as usize]
+                .copy_from_slice(&self.buffer[old_row_start..old_row_start + row_width as usize]);
+        }
+
+        self.buffer = new_buffer;
+        self.window_size = (width, height);
+    }
+
     pub fn clear(&mut self) {
         self.buffer.iter_mut().for_each(|x| *x = 0);
     }
