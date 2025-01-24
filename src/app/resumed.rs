@@ -7,6 +7,13 @@ impl App {
     // This is a common indicator that you can create a window.
     pub fn resumed_func(&mut self, event_loop: &ActiveEventLoop) {
         self.window = Some(event_loop.create_window(self.attributes.clone()).unwrap());
+        let window = self.window.as_ref().unwrap();
+
+        let monitor = window
+            .current_monitor()
+            .unwrap_or_else(|| window.primary_monitor().unwrap());
+
+        self.assign_monitor(&monitor);
 
         self.update_circle_cursor(event_loop);
 

@@ -72,12 +72,7 @@ impl App {
                                 let next_idx = (current_idx + 1) % all_monitors.len();
                                 let next_monitor = &all_monitors[next_idx];
 
-                                // First move to the desired monitor, then maximize
-                                window.set_outer_position(winit::dpi::PhysicalPosition::new(
-                                    next_monitor.position().x,
-                                    next_monitor.position().y,
-                                ));
-                                window.set_maximized(true);
+                                self.assign_monitor(next_monitor);
                             }
                         }
                         _ => (),

@@ -80,26 +80,45 @@ impl App {
 
     pub fn show_window_in_current_monitor(&self) {
         let position = Mouse::get_mouse_position();
-        if let Mouse::Position { x, y } = position {
-            self.set_window_monitor_from_cursor(x, y);
+        if let Some(window) = &self.window {
+            if let Mouse::Position { x, y } = position {
+                let monitor = window.available_monitors().find(|monitor| {
+                    let position = monitor.position();
+                    let size = monitor.size();
+                    x >= position.x
+                        && x <= position.x + size.width as i32
+                        && y >= position.y
+                        && y <= position.y + size.height as i32
+                });
+
+                if let Some(monitor) = monitor {
+                    self.assign_monitor(&monitor);
+                }
+            }
         }
 
         self.set_window_visibility(true);
     }
 
-    pub fn set_window_monitor_from_cursor(&self, x: i32, y: i32) {
-        if let Some(window) = &self.window {
-            let monitor = window.available_monitors().find(|monitor| {
-                let position = monitor.position();
-                let size = monitor.size();
-                x >= position.x
-                    && x <= position.x + size.width as i32
-                    && y >= position.y
-                    && y <= position.y + size.height as i32
-            });
+    fn assign_monitor(&self, monitor: &winit::monitor::MonitorHandle) {
+        let monitor_pos = monitor.position();
+        let work_area = monitor.size();
 
-            window.set_fullscreen(Some(winit::window::Fullscreen::Borderless(monitor)));
-        }
+        self.window
+            .as_ref()
+            .unwrap()
+            .set_outer_position(winit::dpi::PhysicalPosition::new(
+                monitor_pos.x + 1,
+                monitor_pos.y + 1,
+            ));
+        let _ = self
+            .window
+            .as_ref()
+            .unwrap()
+            .request_inner_size(winit::dpi::PhysicalSize::new(
+                work_area.width - 2,
+                work_area.height - 2,
+            ));
     }
 }
 
