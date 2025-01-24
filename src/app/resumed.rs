@@ -18,22 +18,26 @@ impl App {
         self.update_circle_cursor(event_loop);
 
         let window_phisical = self.window.as_ref().unwrap().inner_size();
-        self.window_size = (window_phisical.width, window_phisical.height);
+        self.window_size = (window_phisical.width as i32, window_phisical.height as i32);
         self.canvas = Canvas::new(self.window_size);
 
         let surface_texture = SurfaceTexture::new(
-            self.window_size.0,
-            self.window_size.1,
+            window_phisical.width,
+            window_phisical.height,
             self.window.as_ref().unwrap(),
         );
 
         self.pixels = Some(
-            PixelsBuilder::new(self.window_size.0, self.window_size.1, surface_texture)
-                .surface_texture_format(wgpu::TextureFormat::Bgra8UnormSrgb)
-                .clear_color(wgpu::Color::TRANSPARENT)
-                .blend_state(wgpu::BlendState::ALPHA_BLENDING)
-                .build()
-                .unwrap(),
+            PixelsBuilder::new(
+                window_phisical.width,
+                window_phisical.height,
+                surface_texture,
+            )
+            .surface_texture_format(wgpu::TextureFormat::Bgra8UnormSrgb)
+            .clear_color(wgpu::Color::TRANSPARENT)
+            .blend_state(wgpu::BlendState::ALPHA_BLENDING)
+            .build()
+            .unwrap(),
         );
     }
 }

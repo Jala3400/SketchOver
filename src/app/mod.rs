@@ -30,9 +30,9 @@ pub struct App {
     hotkey_manager: HotkeyManager,
     _proxy: EventLoopProxy<UserEvent>,
     attributes: WindowAttributes,
-    cursor_pos: (f64, f64),
-    window_size: (u32, u32),
-    radius: f64,
+    cursor_pos: (i32, i32),
+    window_size: (i32, i32),
+    radius: f64, // It is needed as f64 to be able to change the size
     is_clicked: bool,
     modifiers: winit::keyboard::ModifiersState,
 }
@@ -54,7 +54,7 @@ impl App {
                 .with_skip_taskbar(true)
                 .with_visible(false)
                 .with_window_level(winit::window::WindowLevel::AlwaysOnTop),
-            cursor_pos: (0.0, 0.0),
+            cursor_pos: (0, 0),
             window_size: (0, 0),
             radius: 2.0,
             is_clicked: false,

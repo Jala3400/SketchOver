@@ -27,7 +27,7 @@ impl App {
             WindowEvent::MouseWheel { delta, .. } => {
                 let delta_value = match delta {
                     winit::event::MouseScrollDelta::LineDelta(_, y) => y as f64,
-                    winit::event::MouseScrollDelta::PixelDelta(pos) => pos.y as f64 / 50.0,
+                    winit::event::MouseScrollDelta::PixelDelta(pos) => pos.y / 50.0,
                 };
                 self.radius = (self.radius + delta_value).max(1.0).min(20.0);
                 self.update_circle_cursor(event_loop);
@@ -85,19 +85,19 @@ impl App {
                     self.canvas.paint_line(
                         self.cursor_pos.0,
                         self.cursor_pos.1,
-                        position.x,
-                        position.y,
-                        self.radius,
+                        position.x as i32,
+                        position.y as i32,
+                        self.radius as i32,
                     );
                     self.window.as_ref().unwrap().request_redraw();
                 }
-                self.cursor_pos = (position.x, position.y);
+                self.cursor_pos = (position.x as i32, position.y as i32);
             }
 
-            WindowEvent::Resized(_) => {
-                let size = window.inner_size();
-                self.window_size = (size.width, size.height);
-                self.canvas.resize(size.width, size.height);
+            WindowEvent::Resized(size) => {
+                let custom_size = (size.width as i32, size.height as i32);
+                self.window_size = (custom_size.0, custom_size.1);
+                self.canvas.resize(custom_size.0, custom_size.1);
                 let _ = self
                     .pixels
                     .as_mut()
@@ -117,9 +117,9 @@ impl App {
                         MouseButton::Left => {
                             self.is_clicked = true;
                             self.canvas.paint_circle(
-                                self.cursor_pos.0,
-                                self.cursor_pos.1,
-                                self.radius,
+                                self.cursor_pos.0 as i32,
+                                self.cursor_pos.1 as i32,
+                                self.radius as i32,
                             );
                             self.window.as_ref().unwrap().request_redraw();
                         }
