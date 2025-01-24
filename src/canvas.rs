@@ -16,7 +16,8 @@ impl Canvas {
             window_size,
         }
     }
-    pub fn paint_line(&mut self, x0: i32, y0: i32, x1: i32, y1: i32, radius: i32) {
+
+    pub fn paint_line(&mut self, x0: i32, y0: i32, x1: i32, y1: i32, radius: i32, color: u32) {
         let dx = (x1 - x0).abs();
         let dy = (y1 - y0).abs();
 
@@ -28,7 +29,7 @@ impl Canvas {
         let mut y = y0;
 
         while x != x1 || y != y1 {
-            self.paint_circle(x, y, radius);
+            self.paint_circle(x, y, radius, color);
 
             let e2 = 2 * err;
 
@@ -42,22 +43,22 @@ impl Canvas {
                 y += sy;
             }
         }
-        self.paint_circle(x, y, radius);
+        self.paint_circle(x, y, radius, color);
     }
 
-    pub fn paint_circle(&mut self, center_x: i32, center_y: i32, radius: i32) {
+    pub fn paint_circle(&mut self, center_x: i32, center_y: i32, radius: i32, color: u32) {
         let mut x = radius;
         let mut y = 0;
         let mut decision = 1 - radius;
 
         while x >= y {
             for i in -x..=x {
-                self.paint_pixel(center_x + i, center_y + y);
-                self.paint_pixel(center_x + i, center_y - y);
+                self.paint_pixel(center_x + i, center_y + y, color);
+                self.paint_pixel(center_x + i, center_y - y, color);
             }
             for i in -y..=y {
-                self.paint_pixel(center_x + i, center_y + x);
-                self.paint_pixel(center_x + i, center_y - x);
+                self.paint_pixel(center_x + i, center_y + x, color);
+                self.paint_pixel(center_x + i, center_y - x, color);
             }
 
             y += 1;
@@ -71,58 +72,64 @@ impl Canvas {
         }
     }
 
-    fn paint_pixel(&mut self, x: i32, y: i32) {
-        let (width, height) = self.window_size;
+    fn paint_pixel(&mut self, x: i32, y: i32, color: u32) {
+        if let Ok(mut buffer) = self.surface.buffer_mut() {
+            let (width, height) = self.window_size;
 
-        // Bounds checking
-        if x < 0 || y < 0 || x >= width || y >= height {
-            return;
+            // Bounds checking
+            if x < 0 || y < 0 || x >= width || y >= height {
+                return;
+            }
+
+            let index = (y * width + x) as usize;
+            // Transparency goes first
+            self.drawing[index] = color;
+            buffer[index] = color;
         }
-
-        let index = (y * width + x) as usize;
-        // Transparency goes first
-        let color = 0xffff0000;
-        self.drawing[index] = color;
-        let mut buffer = self.surface.buffer_mut().unwrap();
-        buffer[index] = color;
     }
 
     pub fn resize(&mut self, width: i32, height: i32) {
-        let mut new_buffer = vec![0; (width * height) as usize];
-        let (old_width, old_height) = self.window_size;
-
-        for y in 0..height.min(old_height) {
-            let old_row_start = (y * old_width) as usize;
-            let new_row_start = (y * width) as usize;
-            let old_pixel = self.drawing[old_row_start];
-            new_buffer[new_row_start] = old_pixel;
-            if let Ok(mut buffer) = self.surface.buffer_mut() {
-                buffer[new_row_start] = old_pixel;
-            }
-        }
-
         let width_n = std::num::NonZeroU32::new(width as u32).unwrap();
         let height_n = std::num::NonZeroU32::new(height as u32).unwrap();
-        let _ = self.surface.resize(width_n, height_n);
 
-        self.drawing = new_buffer;
-        self.window_size = (width, height);
+        let _ = self.surface.resize(width_n, height_n);
+        if let Ok(mut buffer) = self.surface.buffer_mut() {
+            let (old_width, old_height) = self.window_size;
+
+            let mut new_buffer = vec![0; (width * height) as usize];
+
+            let min_height = height.min(old_height);
+            let min_width = width.min(old_width);
+
+            for y in 0..min_height {
+                let old_start = (y * old_width) as usize;
+                let new_start = (y * width) as usize;
+
+                new_buffer[new_start..new_start + min_width as usize]
+                    .copy_from_slice(&self.drawing[old_start..old_start + min_width as usize]);
+            }
+
+            self.drawing = new_buffer.clone();
+            buffer.copy_from_slice(&new_buffer);
+            self.window_size = (width, height);
+        }
     }
 
     pub fn clear(&mut self) {
-        self.drawing.iter_mut().for_each(|x| *x = 0);
-        let mut buffer = self.surface.buffer_mut().unwrap();
-        buffer.iter_mut().for_each(|x| *x = 0);
+        if let Ok(mut buffer) = self.surface.buffer_mut() {
+            self.drawing.iter_mut().for_each(|x| *x = 0);
+            buffer.iter_mut().for_each(|x| *x = 0);
+        }
     }
 
     pub fn redraw(&mut self) {
-        let buffer = self.surface.buffer_mut().unwrap();
+        if let Ok(buffer) = self.surface.buffer_mut() {
+            // Copy canvas buffer into pixels frame
+            // buffer.copy_from_slice(self.canvas.buffer());
 
-        // Copy canvas buffer into pixels frame
-        // buffer.copy_from_slice(self.canvas.buffer());
-
-        // Render the frame
-        let _ = buffer.present();
+            // Render the frame
+            let _ = buffer.present();
+        }
     }
 
     pub fn buffer(&self) -> &[u32] {

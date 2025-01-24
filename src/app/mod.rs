@@ -22,6 +22,18 @@ pub enum UserEvent {
     HotkeyEvent(GlobalHotKeyEvent),
 }
 
+#[derive(Debug, Clone, Copy)]
+pub enum Colors {
+    RED = 0xffff0000,
+    GREEN = 0xff00ff00,
+    BLUE = 0xff0000ff,
+    YELLOW = 0xffffff00,
+    CYAN = 0xff00ffff,
+    MAGENTA = 0xffff00ff,
+    WHITE = 0xffffffff,
+    BLACK = 0xff000000,
+}
+
 pub struct App {
     window: Option<Rc<Window>>,
     canvas: Option<Canvas>,
@@ -31,7 +43,8 @@ pub struct App {
     attributes: WindowAttributes,
     cursor_pos: (i32, i32),
     window_size: (i32, i32),
-    radius: f64, // It is needed as f64 to be able to change the size
+    radius: f64,           // It is needed as f64 to be able to change the size
+    current_color: Colors, // ARGB format
     is_clicked: bool,
     modifiers: winit::keyboard::ModifiersState,
 }
@@ -55,6 +68,7 @@ impl App {
             cursor_pos: (0, 0),
             window_size: (0, 0),
             radius: 2.0,
+            current_color: Colors::RED,
             is_clicked: false,
             modifiers: winit::keyboard::ModifiersState::empty(),
         }
@@ -67,7 +81,13 @@ impl App {
             .set_cursor(winit::window::Cursor::Custom(custom_circle_cursor(
                 event_loop,
                 self.radius as i32,
+                self.current_color as u32,
             )));
+    }
+
+    fn update_current_color(&mut self, event_loop: &ActiveEventLoop, color: Colors) {
+        self.current_color = color;
+        self.update_circle_cursor(event_loop);
     }
 
     pub fn set_window_visibility(&self, visible: bool) {

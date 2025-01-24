@@ -3,6 +3,7 @@ use winit::event_loop::ActiveEventLoop;
 pub fn custom_circle_cursor(
     event_loop: &ActiveEventLoop,
     radius: i32,
+    current_color: u32,
 ) -> winit::window::CustomCursor {
     let diameter = radius * 2 + 1 as i32;
     // Using a flat vector to store the pattern
@@ -18,13 +19,37 @@ pub fn custom_circle_cursor(
         // Draw horizontal lines to fill the circle
         for i in (-x as i32)..=(x as i32) {
             let center = radius as i32;
-            set_pixel(&mut cursor_pattern, center + i, center + y, diameter);
-            set_pixel(&mut cursor_pattern, center + i, center - y, diameter);
+            set_pixel(
+                &mut cursor_pattern,
+                center + i,
+                center + y,
+                diameter,
+                current_color,
+            );
+            set_pixel(
+                &mut cursor_pattern,
+                center + i,
+                center - y,
+                diameter,
+                current_color,
+            );
         }
         for i in (-y as i32)..=(y as i32) {
             let center = radius as i32;
-            set_pixel(&mut cursor_pattern, center + i, center + x, diameter);
-            set_pixel(&mut cursor_pattern, center + i, center - x, diameter);
+            set_pixel(
+                &mut cursor_pattern,
+                center + i,
+                center + x,
+                diameter,
+                current_color,
+            );
+            set_pixel(
+                &mut cursor_pattern,
+                center + i,
+                center - x,
+                diameter,
+                current_color,
+            );
         }
 
         y += 1;
@@ -49,10 +74,10 @@ pub fn custom_circle_cursor(
     event_loop.create_custom_cursor(custom_cursor_source)
 }
 
-fn set_pixel(cursor_pattern: &mut Vec<u8>, x: i32, y: i32, diameter: i32) {
+fn set_pixel(cursor_pattern: &mut Vec<u8>, x: i32, y: i32, diameter: i32, color: u32) {
     let idx = ((y * diameter + x) * 4) as usize;
-    cursor_pattern[idx] = 255; // R
-    cursor_pattern[idx + 1] = 0; // G
-    cursor_pattern[idx + 2] = 0; // B
-    cursor_pattern[idx + 3] = 255; // A
+    cursor_pattern[idx] = ((color >> 16) & 0xFF) as u8; // R (extract red component)
+    cursor_pattern[idx + 1] = ((color >> 8) & 0xFF) as u8; // G (extract green component)
+    cursor_pattern[idx + 2] = (color & 0xFF) as u8; // B (extract blue component)
+    cursor_pattern[idx + 3] = ((color >> 24) & 0xFF) as u8; // A (extract alpha component)
 }

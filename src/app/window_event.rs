@@ -1,4 +1,4 @@
-use super::App;
+use super::{App, Colors};
 use winit::{
     event::{ElementState, KeyEvent, MouseButton, WindowEvent},
     event_loop::ActiveEventLoop,
@@ -75,6 +75,39 @@ impl App {
                                 self.assign_monitor(next_monitor);
                             }
                         }
+
+                        KeyCode::KeyR => {
+                            self.update_current_color(event_loop, Colors::RED);
+                        }
+
+                        KeyCode::KeyG => {
+                            self.update_current_color(event_loop, Colors::GREEN);
+                        }
+
+                        KeyCode::KeyB => {
+                            self.update_current_color(event_loop, Colors::BLUE);
+                        }
+
+                        KeyCode::KeyY => {
+                            self.update_current_color(event_loop, Colors::YELLOW);
+                        }
+
+                        KeyCode::KeyC => {
+                            self.update_current_color(event_loop, Colors::CYAN);
+                        }
+
+                        KeyCode::KeyM => {
+                            self.update_current_color(event_loop, Colors::MAGENTA);
+                        }
+
+                        KeyCode::KeyW => {
+                            self.update_current_color(event_loop, Colors::WHITE);
+                        }
+
+                        KeyCode::KeyK => {
+                            self.update_current_color(event_loop, Colors::BLACK);
+                        }
+
                         _ => (),
                     }
                 }
@@ -88,6 +121,7 @@ impl App {
                         position.x as i32,
                         position.y as i32,
                         self.radius as i32,
+                        self.current_color as u32,
                     );
                     self.window.as_ref().unwrap().request_redraw();
                 }
@@ -111,6 +145,7 @@ impl App {
                                 self.cursor_pos.0 as i32,
                                 self.cursor_pos.1 as i32,
                                 self.radius as i32,
+                                self.current_color as u32,
                             );
                             self.window.as_ref().unwrap().request_redraw();
                         }
