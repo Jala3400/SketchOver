@@ -19,10 +19,10 @@ impl App {
             .unwrap_or_else(|| window.primary_monitor().unwrap());
 
         self.assign_monitor(&monitor);
-        self.update_circle_cursor(event_loop);
-
+        
         let window_phisical = self.window.as_ref().unwrap().inner_size();
         self.window_size = (window_phisical.width as i32, window_phisical.height as i32);
         self.canvas = Some(Canvas::new(surface, self.window_size));
+        self.update_circle_cursor(event_loop);
     }
 }

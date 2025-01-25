@@ -1,4 +1,4 @@
-use crate::app::Colors;
+use crate::app::{Colors, Mode};
 use softbuffer::Surface;
 use std::rc::Rc;
 use winit::window::Window;
@@ -6,6 +6,7 @@ use winit::window::Window;
 pub struct Canvas {
     drawing: Vec<u32>,
     surface: Surface<Rc<Window>, Rc<Window>>,
+    mode: Mode,
     background_color: Colors,
     window_size: (i32, i32),
 }
@@ -15,12 +16,28 @@ impl Canvas {
         Canvas {
             drawing: vec![0; (window_size.0 * window_size.1) as usize],
             surface: surface,
+            mode: Mode::Drawing(Colors::RED),
             background_color: Colors::TRANSPARENT,
             window_size,
         }
     }
 
-    pub fn paint_line(&mut self, x0: i32, y0: i32, x1: i32, y1: i32, radius: i32, color: u32) {
+    pub fn set_mode(&mut self, mode: Mode) {
+        self.mode = mode;
+    }
+
+    pub fn get_mode(&self) -> Mode {
+        self.mode.clone()
+    }
+
+    pub fn toggle_mode(&mut self) {
+        match self.mode {
+            Mode::Drawing(color) => self.mode = Mode::Erasing(color),
+            Mode::Erasing(color) => self.mode = Mode::Drawing(color),
+        }
+    }
+
+    pub fn paint_line(&mut self, x0: i32, y0: i32, x1: i32, y1: i32, radius: i32) {
         let dx = (x1 - x0).abs();
         let dy = (y1 - y0).abs();
 
@@ -32,7 +49,7 @@ impl Canvas {
         let mut y = y0;
 
         while x != x1 || y != y1 {
-            self.paint_circle(x, y, radius, color);
+            self.paint_circle(x, y, radius);
 
             let e2 = 2 * err;
 
@@ -46,22 +63,22 @@ impl Canvas {
                 y += sy;
             }
         }
-        self.paint_circle(x, y, radius, color);
+        self.paint_circle(x, y, radius);
     }
 
-    pub fn paint_circle(&mut self, center_x: i32, center_y: i32, radius: i32, color: u32) {
+    pub fn paint_circle(&mut self, center_x: i32, center_y: i32, radius: i32) {
         let mut x = radius;
         let mut y = 0;
         let mut decision = 1 - radius;
 
         while x >= y {
             for i in -x..=x {
-                self.paint_pixel(center_x + i, center_y + y, color);
-                self.paint_pixel(center_x + i, center_y - y, color);
+                self.paint_pixel(center_x + i, center_y + y);
+                self.paint_pixel(center_x + i, center_y - y);
             }
             for i in -y..=y {
-                self.paint_pixel(center_x + i, center_y + x, color);
-                self.paint_pixel(center_x + i, center_y - x, color);
+                self.paint_pixel(center_x + i, center_y + x);
+                self.paint_pixel(center_x + i, center_y - x);
             }
 
             y += 1;
@@ -75,7 +92,7 @@ impl Canvas {
         }
     }
 
-    fn paint_pixel(&mut self, x: i32, y: i32, color: u32) {
+    fn paint_pixel(&mut self, x: i32, y: i32) {
         if let Ok(mut buffer) = self.surface.buffer_mut() {
             let (width, height) = self.window_size;
 
@@ -85,9 +102,17 @@ impl Canvas {
             }
 
             let index = (y * width + x) as usize;
-            // Transparency goes first
-            self.drawing[index] = color;
-            buffer[index] = color;
+
+            match self.mode {
+                Mode::Drawing(color) => {
+                    self.drawing[index] = color as u32;
+                    buffer[index] = color as u32;
+                }
+                Mode::Erasing(_) => {
+                    self.drawing[index] = 0;
+                    buffer[index] = self.background_color as u32;
+                }
+            }
         }
     }
 

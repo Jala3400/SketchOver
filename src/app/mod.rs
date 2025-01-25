@@ -38,6 +38,7 @@ pub enum Colors {
     TRANSPARENT = 0x00000000,
 }
 
+#[derive(Debug, Clone, Copy)]
 pub enum Mode {
     Drawing(Colors),
     Erasing(Colors),
@@ -53,7 +54,6 @@ pub struct App {
     cursor_pos: (i32, i32),
     window_size: (i32, i32),
     radius: f64, // It is needed as f64 to be able to change the size
-    mode: Mode,
     is_clicked: bool,
     modifiers: winit::keyboard::ModifiersState,
     last_paint_time: std::time::Instant,
@@ -78,7 +78,6 @@ impl App {
             cursor_pos: (0, 0),
             window_size: (0, 0),
             radius: 2.0,
-            mode: Mode::Drawing(Colors::RED),
             is_clicked: false,
             modifiers: winit::keyboard::ModifiersState::empty(),
             last_paint_time: std::time::Instant::now(),
@@ -86,7 +85,8 @@ impl App {
     }
 
     fn update_circle_cursor(&self, event_loop: &ActiveEventLoop) {
-        if let Mode::Drawing(color) = self.mode {
+        let mode = self.canvas.as_ref().unwrap().get_mode();
+        if let Mode::Drawing(color) = mode {
             self.window
                 .as_ref()
                 .unwrap()
@@ -107,19 +107,12 @@ impl App {
     }
 
     fn set_mode(&mut self, event_loop: &ActiveEventLoop, mode: Mode) {
-        self.mode = mode;
+        self.canvas.as_mut().unwrap().set_mode(mode);
         self.update_circle_cursor(event_loop);
     }
 
     fn toggle_mode(&mut self, event_loop: &ActiveEventLoop) {
-        match self.mode {
-            Mode::Drawing(color) => {
-                self.set_mode(event_loop, Mode::Erasing(color));
-            }
-            Mode::Erasing(color) => {
-                self.set_mode(event_loop, Mode::Drawing(color));
-            }
-        }
+        self.canvas.as_mut().unwrap().toggle_mode();
         self.update_circle_cursor(event_loop);
     }
 
@@ -174,13 +167,6 @@ impl App {
                 work_area.width - 2,
                 work_area.height - 2,
             ));
-    }
-
-    fn get_drawing_color(&self) -> u32 {
-        match self.mode {
-            Mode::Drawing(c) => c as u32,
-            Mode::Erasing(_) => Colors::TRANSPARENT as u32,
-        }
     }
 }
 
