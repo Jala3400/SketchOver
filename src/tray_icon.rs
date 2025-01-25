@@ -12,17 +12,23 @@ pub fn setup_tray_icon(proxy: &EventLoopProxy<UserEvent>) -> tray_icon::TrayIcon
             .text("Show")
             .id(tray_icon::menu::MenuId::from("Show"))
             .enabled(true)
+            .accelerator(Some("Ctrl+Alt+S"))
+            .unwrap()
             .build(),
         &MenuItemBuilder::new()
             .text("Hide")
             .id(tray_icon::menu::MenuId::from("Hide"))
             .enabled(true)
+            .accelerator(Some("Esc"))
+            .unwrap()
             .build(),
         &PredefinedMenuItem::separator(),
         &MenuItemBuilder::new()
             .text("Exit")
             .id(tray_icon::menu::MenuId::from("Exit"))
             .enabled(true)
+            .accelerator(Some("Ctrl+Alt+Q"))
+            .unwrap()
             .build(),
     ];
 

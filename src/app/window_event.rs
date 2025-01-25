@@ -43,7 +43,7 @@ impl App {
             } => {
                 if state == ElementState::Pressed {
                     match self.modifiers {
-                        val if val == ModifiersState::CONTROL | ModifiersState::SHIFT => {
+                        val if val == ModifiersState::CONTROL | ModifiersState::ALT => {
                             match key_code {
                                 KeyCode::KeyQ => {
                                     event_loop.exit();
