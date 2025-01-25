@@ -43,76 +43,86 @@ impl App {
                 ..
             } => {
                 if state == ElementState::Pressed {
-                    match key_code {
-                        KeyCode::Escape => {
-                            self.window.as_ref().unwrap().set_visible(false);
-                        }
-
-                        KeyCode::KeyQ => {
-                            if self.modifiers == ModifiersState::CONTROL | ModifiersState::SHIFT {
-                                event_loop.exit();
+                    match self.modifiers {
+                        val if val == ModifiersState::CONTROL | ModifiersState::SHIFT => {
+                            match key_code {
+                                KeyCode::KeyQ => {
+                                    event_loop.exit();
+                                }
+                                _ => (),
                             }
                         }
 
-                        KeyCode::Tab => {
-                            let current_monitor = window
-                                .current_monitor()
-                                .unwrap_or_else(|| window.primary_monitor().unwrap());
-                            let all_monitors: Vec<MonitorHandle> =
-                                window.available_monitors().collect();
+                        _ => {
+                            match key_code {
+                                KeyCode::Escape => {
+                                    self.window.as_ref().unwrap().set_visible(false);
+                                }
 
-                            if !all_monitors.is_empty() {
-                                // Find current monitor index
-                                let current_idx = all_monitors
-                                    .iter()
-                                    .position(|m| m.name() == current_monitor.name())
-                                    .unwrap_or(0);
+                                KeyCode::Tab => {
+                                    let current_monitor = window
+                                        .current_monitor()
+                                        .unwrap_or_else(|| window.primary_monitor().unwrap());
+                                    let all_monitors: Vec<MonitorHandle> =
+                                        window.available_monitors().collect();
 
-                                // Get next monitor (wrap around to first if at end)
-                                let next_idx = (current_idx + 1) % all_monitors.len();
-                                let next_monitor = &all_monitors[next_idx];
+                                    if !all_monitors.is_empty() {
+                                        // Find current monitor index
+                                        let current_idx = all_monitors
+                                            .iter()
+                                            .position(|m| m.name() == current_monitor.name())
+                                            .unwrap_or(0);
 
-                                self.assign_monitor(next_monitor);
+                                        // Get next monitor (wrap around to first if at end)
+                                        let next_idx = (current_idx + 1) % all_monitors.len();
+                                        let next_monitor = &all_monitors[next_idx];
+
+                                        self.assign_monitor(next_monitor);
+                                    }
+                                }
+
+                                KeyCode::KeyR => {
+                                    self.set_mode(event_loop, super::Mode::Drawing(Colors::RED));
+                                }
+
+                                KeyCode::KeyG => {
+                                    self.set_mode(event_loop, super::Mode::Drawing(Colors::GREEN));
+                                }
+
+                                KeyCode::KeyB => {
+                                    self.set_mode(event_loop, super::Mode::Drawing(Colors::BLUE));
+                                }
+
+                                KeyCode::KeyY => {
+                                    self.set_mode(event_loop, super::Mode::Drawing(Colors::YELLOW));
+                                }
+
+                                KeyCode::KeyC => {
+                                    self.set_mode(event_loop, super::Mode::Drawing(Colors::CYAN));
+                                }
+
+                                KeyCode::KeyM => {
+                                    self.set_mode(
+                                        event_loop,
+                                        super::Mode::Drawing(Colors::MAGENTA),
+                                    );
+                                }
+
+                                KeyCode::KeyW => {
+                                    self.set_mode(event_loop, super::Mode::Drawing(Colors::WHITE));
+                                }
+
+                                KeyCode::KeyK => {
+                                    self.set_mode(event_loop, super::Mode::Drawing(Colors::BLACK));
+                                }
+
+                                KeyCode::Space => {
+                                    self.toggle_mode(event_loop);
+                                }
+
+                                _ => (),
                             }
                         }
-
-                        KeyCode::KeyR => {
-                            self.set_mode(event_loop, super::Mode::Drawing(Colors::RED));
-                        }
-
-                        KeyCode::KeyG => {
-                            self.set_mode(event_loop, super::Mode::Drawing(Colors::GREEN));
-                        }
-
-                        KeyCode::KeyB => {
-                            self.set_mode(event_loop, super::Mode::Drawing(Colors::BLUE));
-                        }
-
-                        KeyCode::KeyY => {
-                            self.set_mode(event_loop, super::Mode::Drawing(Colors::YELLOW));
-                        }
-
-                        KeyCode::KeyC => {
-                            self.set_mode(event_loop, super::Mode::Drawing(Colors::CYAN));
-                        }
-
-                        KeyCode::KeyM => {
-                            self.set_mode(event_loop, super::Mode::Drawing(Colors::MAGENTA));
-                        }
-
-                        KeyCode::KeyW => {
-                            self.set_mode(event_loop, super::Mode::Drawing(Colors::WHITE));
-                        }
-
-                        KeyCode::KeyK => {
-                            self.set_mode(event_loop, super::Mode::Drawing(Colors::BLACK));
-                        }
-
-                        KeyCode::Space => {
-                            self.toggle_mode(event_loop);
-                        }
-
-                        _ => (),
                     }
                 }
             }
