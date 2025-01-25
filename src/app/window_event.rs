@@ -77,35 +77,39 @@ impl App {
                         }
 
                         KeyCode::KeyR => {
-                            self.update_current_color(event_loop, Colors::RED);
+                            self.set_mode(event_loop, super::Mode::Drawing(Colors::RED));
                         }
 
                         KeyCode::KeyG => {
-                            self.update_current_color(event_loop, Colors::GREEN);
+                            self.set_mode(event_loop, super::Mode::Drawing(Colors::GREEN));
                         }
 
                         KeyCode::KeyB => {
-                            self.update_current_color(event_loop, Colors::BLUE);
+                            self.set_mode(event_loop, super::Mode::Drawing(Colors::BLUE));
                         }
 
                         KeyCode::KeyY => {
-                            self.update_current_color(event_loop, Colors::YELLOW);
+                            self.set_mode(event_loop, super::Mode::Drawing(Colors::YELLOW));
                         }
 
                         KeyCode::KeyC => {
-                            self.update_current_color(event_loop, Colors::CYAN);
+                            self.set_mode(event_loop, super::Mode::Drawing(Colors::CYAN));
                         }
 
                         KeyCode::KeyM => {
-                            self.update_current_color(event_loop, Colors::MAGENTA);
+                            self.set_mode(event_loop, super::Mode::Drawing(Colors::MAGENTA));
                         }
 
                         KeyCode::KeyW => {
-                            self.update_current_color(event_loop, Colors::WHITE);
+                            self.set_mode(event_loop, super::Mode::Drawing(Colors::WHITE));
                         }
 
                         KeyCode::KeyK => {
-                            self.update_current_color(event_loop, Colors::BLACK);
+                            self.set_mode(event_loop, super::Mode::Drawing(Colors::BLACK));
+                        }
+
+                        KeyCode::Space => {
+                            self.toggle_mode(event_loop);
                         }
 
                         _ => (),
@@ -115,13 +119,14 @@ impl App {
 
             WindowEvent::CursorMoved { position, .. } => {
                 if self.is_clicked {
+                    let color = self.get_drawing_color();
                     self.canvas.as_mut().unwrap().paint_line(
                         self.cursor_pos.0,
                         self.cursor_pos.1,
                         position.x as i32,
                         position.y as i32,
                         self.radius as i32,
-                        self.current_color as u32,
+                        color,
                     );
                     self.window.as_ref().unwrap().request_redraw();
                 }
@@ -141,11 +146,12 @@ impl App {
                     match button {
                         MouseButton::Left => {
                             self.is_clicked = true;
+                            let color = self.get_drawing_color();
                             self.canvas.as_mut().unwrap().paint_circle(
                                 self.cursor_pos.0 as i32,
                                 self.cursor_pos.1 as i32,
                                 self.radius as i32,
-                                self.current_color as u32,
+                                color,
                             );
                             self.window.as_ref().unwrap().request_redraw();
                         }

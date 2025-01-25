@@ -122,6 +122,18 @@ impl Canvas {
         }
     }
 
+    // fn rerender(&mut self) {
+    //     if let Ok(mut buffer) = self.surface.buffer_mut() {
+    //         buffer
+    //             .iter_mut()
+    //             .for_each(|x| *x = self.background_color as u32);
+    //         self.drawing
+    //             .iter()
+    //             .enumerate()
+    //             .for_each(|(i, x)| buffer[i] = *x);
+    //     }
+    // }
+
     pub fn redraw(&mut self) {
         if let Ok(buffer) = self.surface.buffer_mut() {
             // Copy canvas buffer into pixels frame

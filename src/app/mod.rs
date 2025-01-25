@@ -1,5 +1,7 @@
 use crate::{
-    canvas::Canvas, cursor::custom_circle_cursor, hotkeys::HotkeyManager,
+    canvas::Canvas,
+    cursor::{color_circle_cursor, erasing_cursor},
+    hotkeys::HotkeyManager,
     tray_icon::setup_tray_icon,
 };
 use global_hotkey::GlobalHotKeyEvent;
@@ -23,6 +25,7 @@ pub enum UserEvent {
 }
 
 #[derive(Debug, Clone, Copy)]
+// ARGB format
 pub enum Colors {
     RED = 0xffff0000,
     GREEN = 0xff00ff00,
@@ -32,6 +35,12 @@ pub enum Colors {
     MAGENTA = 0xffff00ff,
     WHITE = 0xffffffff,
     BLACK = 0xff000000,
+    TRANSPARENT = 0x00000000,
+}
+
+pub enum Mode {
+    Drawing(Colors),
+    Erasing(Colors),
 }
 
 pub struct App {
@@ -43,8 +52,8 @@ pub struct App {
     attributes: WindowAttributes,
     cursor_pos: (i32, i32),
     window_size: (i32, i32),
-    radius: f64,           // It is needed as f64 to be able to change the size
-    current_color: Colors, // ARGB format
+    radius: f64, // It is needed as f64 to be able to change the size
+    mode: Mode,
     is_clicked: bool,
     modifiers: winit::keyboard::ModifiersState,
 }
@@ -68,25 +77,47 @@ impl App {
             cursor_pos: (0, 0),
             window_size: (0, 0),
             radius: 2.0,
-            current_color: Colors::RED,
+            mode: Mode::Drawing(Colors::RED),
             is_clicked: false,
             modifiers: winit::keyboard::ModifiersState::empty(),
         }
     }
 
     fn update_circle_cursor(&self, event_loop: &ActiveEventLoop) {
-        self.window
-            .as_ref()
-            .unwrap()
-            .set_cursor(winit::window::Cursor::Custom(custom_circle_cursor(
-                event_loop,
-                self.radius as i32,
-                self.current_color as u32,
-            )));
+        if let Mode::Drawing(color) = self.mode {
+            self.window
+                .as_ref()
+                .unwrap()
+                .set_cursor(winit::window::Cursor::Custom(color_circle_cursor(
+                    event_loop,
+                    self.radius as i32,
+                    color as u32,
+                )));
+        } else {
+            self.window
+                .as_ref()
+                .unwrap()
+                .set_cursor(winit::window::Cursor::Custom(erasing_cursor(
+                    event_loop,
+                    self.radius as i32,
+                )));
+        }
     }
 
-    fn update_current_color(&mut self, event_loop: &ActiveEventLoop, color: Colors) {
-        self.current_color = color;
+    fn set_mode(&mut self, event_loop: &ActiveEventLoop, mode: Mode) {
+        self.mode = mode;
+        self.update_circle_cursor(event_loop);
+    }
+
+    fn toggle_mode(&mut self, event_loop: &ActiveEventLoop) {
+        match self.mode {
+            Mode::Drawing(color) => {
+                self.set_mode(event_loop, Mode::Erasing(color));
+            }
+            Mode::Erasing(color) => {
+                self.set_mode(event_loop, Mode::Drawing(color));
+            }
+        }
         self.update_circle_cursor(event_loop);
     }
 
@@ -137,6 +168,13 @@ impl App {
                 work_area.width - 2,
                 work_area.height - 2,
             ));
+    }
+
+    fn get_drawing_color(&self) -> u32 {
+        match self.mode {
+            Mode::Drawing(c) => c as u32,
+            Mode::Erasing(_) => Colors::TRANSPARENT as u32,
+        }
     }
 }
 
