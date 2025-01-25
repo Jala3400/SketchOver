@@ -53,7 +53,6 @@ pub struct App {
     attributes: WindowAttributes,
     cursor_pos: (i32, i32),
     window_size: (i32, i32),
-    radius: f64, // It is needed as f64 to be able to change the size
     is_clicked: bool,
     modifiers: winit::keyboard::ModifiersState,
     last_paint_time: std::time::Instant,
@@ -77,7 +76,6 @@ impl App {
                 .with_window_level(winit::window::WindowLevel::AlwaysOnTop),
             cursor_pos: (0, 0),
             window_size: (0, 0),
-            radius: 2.0,
             is_clicked: false,
             modifiers: winit::keyboard::ModifiersState::empty(),
             last_paint_time: std::time::Instant::now(),
@@ -85,25 +83,33 @@ impl App {
     }
 
     fn update_circle_cursor(&self, event_loop: &ActiveEventLoop) {
-        let mode = self.canvas.as_ref().unwrap().get_mode();
-        if let Mode::Drawing(color) = mode {
-            self.window
-                .as_ref()
-                .unwrap()
-                .set_cursor(winit::window::Cursor::Custom(color_circle_cursor(
-                    event_loop,
-                    self.radius as i32,
-                    color as u32,
-                )));
-        } else {
-            self.window
-                .as_ref()
-                .unwrap()
-                .set_cursor(winit::window::Cursor::Custom(erasing_cursor(
-                    event_loop,
-                    self.radius as i32,
-                )));
+        if let Some(canvas) = &self.canvas {
+            let mode = canvas.get_mode();
+            let radius = canvas.get_radius();
+            if let Mode::Drawing(color) = mode {
+                self.window
+                    .as_ref()
+                    .unwrap()
+                    .set_cursor(winit::window::Cursor::Custom(color_circle_cursor(
+                        event_loop,
+                        radius as i32,
+                        color as u32,
+                    )));
+            } else {
+                self.window
+                    .as_ref()
+                    .unwrap()
+                    .set_cursor(winit::window::Cursor::Custom(erasing_cursor(
+                        event_loop,
+                        radius as i32,
+                    )));
+            }
         }
+    }
+
+    fn resize_radius(&mut self, event_loop: &ActiveEventLoop, delta: f64) {
+        self.canvas.as_mut().unwrap().resize_radius(delta);
+        self.update_circle_cursor(event_loop);
     }
 
     fn set_mode(&mut self, event_loop: &ActiveEventLoop, mode: Mode) {

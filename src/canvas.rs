@@ -6,6 +6,7 @@ use winit::window::Window;
 pub struct Canvas {
     drawing: Vec<u32>,
     surface: Surface<Rc<Window>, Rc<Window>>,
+    radius: f64, // It is needed as f64 to be able to change the size
     mode: Mode,
     background_color: Colors,
     window_size: (i32, i32),
@@ -16,10 +17,19 @@ impl Canvas {
         Canvas {
             drawing: vec![0; (window_size.0 * window_size.1) as usize],
             surface: surface,
+            radius: 2.0,
             mode: Mode::Drawing(Colors::RED),
             background_color: Colors::TRANSPARENT,
             window_size,
         }
+    }
+
+    pub fn resize_radius(&mut self, delta: f64) {
+        self.radius = (self.radius + delta).max(1.0).min(20.0);
+    }
+
+    pub fn get_radius(&self) -> f64 {
+        self.radius
     }
 
     pub fn set_mode(&mut self, mode: Mode) {
@@ -37,7 +47,7 @@ impl Canvas {
         }
     }
 
-    pub fn paint_line(&mut self, x0: i32, y0: i32, x1: i32, y1: i32, radius: i32) {
+    pub fn paint_line(&mut self, x0: i32, y0: i32, x1: i32, y1: i32) {
         let dx = (x1 - x0).abs();
         let dy = (y1 - y0).abs();
 
@@ -49,7 +59,7 @@ impl Canvas {
         let mut y = y0;
 
         while x != x1 || y != y1 {
-            self.paint_circle(x, y, radius);
+            self.paint_circle(x, y);
 
             let e2 = 2 * err;
 
@@ -63,10 +73,11 @@ impl Canvas {
                 y += sy;
             }
         }
-        self.paint_circle(x, y, radius);
+        self.paint_circle(x, y);
     }
 
-    pub fn paint_circle(&mut self, center_x: i32, center_y: i32, radius: i32) {
+    pub fn paint_circle(&mut self, center_x: i32, center_y: i32) {
+        let radius = self.radius as i32;
         let mut x = radius;
         let mut y = 0;
         let mut decision = 1 - radius;

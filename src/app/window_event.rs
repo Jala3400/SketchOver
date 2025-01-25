@@ -29,8 +29,7 @@ impl App {
                     winit::event::MouseScrollDelta::LineDelta(_, y) => y as f64,
                     winit::event::MouseScrollDelta::PixelDelta(pos) => pos.y / 50.0,
                 };
-                self.radius = (self.radius + delta_value).max(1.0).min(20.0);
-                self.update_circle_cursor(event_loop);
+                self.resize_radius(event_loop, delta_value);
             }
 
             WindowEvent::KeyboardInput {
@@ -184,7 +183,6 @@ impl App {
                             self.cursor_pos.1,
                             position.x as i32,
                             position.y as i32,
-                            self.radius as i32,
                         );
                         self.window.as_ref().unwrap().request_redraw();
                         self.last_paint_time = now;
@@ -207,11 +205,10 @@ impl App {
                     match button {
                         MouseButton::Left => {
                             self.is_clicked = true;
-                            self.canvas.as_mut().unwrap().paint_circle(
-                                self.cursor_pos.0 as i32,
-                                self.cursor_pos.1 as i32,
-                                self.radius as i32,
-                            );
+                            self.canvas
+                                .as_mut()
+                                .unwrap()
+                                .paint_circle(self.cursor_pos.0 as i32, self.cursor_pos.1 as i32);
                             self.window.as_ref().unwrap().request_redraw();
                         }
                         _ => (),
