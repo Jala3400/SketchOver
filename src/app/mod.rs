@@ -56,6 +56,7 @@ pub struct App {
     mode: Mode,
     is_clicked: bool,
     modifiers: winit::keyboard::ModifiersState,
+    last_paint_time: std::time::Instant,
 }
 
 impl App {
@@ -80,6 +81,7 @@ impl App {
             mode: Mode::Drawing(Colors::RED),
             is_clicked: false,
             modifiers: winit::keyboard::ModifiersState::empty(),
+            last_paint_time: std::time::Instant::now(),
         }
     }
 

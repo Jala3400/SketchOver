@@ -175,20 +175,27 @@ impl App {
 
             WindowEvent::CursorMoved { position, .. } => {
                 if self.is_clicked {
-                    let color = self.get_drawing_color();
-                    self.canvas.as_mut().unwrap().paint_line(
-                        self.cursor_pos.0,
-                        self.cursor_pos.1,
-                        position.x as i32,
-                        position.y as i32,
-                        self.radius as i32,
-                        color,
-                    );
-                    self.window.as_ref().unwrap().request_redraw();
-                }
-                self.cursor_pos = (position.x as i32, position.y as i32);
-            }
+                    let now = std::time::Instant::now();
+                    let elapsed = now - self.last_paint_time;
 
+                    if elapsed.as_millis() >= 7 {
+                        let color = self.get_drawing_color();
+                        self.canvas.as_mut().unwrap().paint_line(
+                            self.cursor_pos.0,
+                            self.cursor_pos.1,
+                            position.x as i32,
+                            position.y as i32,
+                            self.radius as i32,
+                            color,
+                        );
+                        self.window.as_ref().unwrap().request_redraw();
+                        self.last_paint_time = now;
+                        self.cursor_pos = (position.x as i32, position.y as i32);
+                    }
+                } else {
+                    self.cursor_pos = (position.x as i32, position.y as i32);
+                }
+            }
             WindowEvent::Resized(size) => {
                 self.canvas
                     .as_mut()
