@@ -52,7 +52,6 @@ pub struct App {
     _proxy: EventLoopProxy<UserEvent>,
     attributes: WindowAttributes,
     cursor_pos: (i32, i32),
-    window_size: (i32, i32),
     is_clicked: bool,
     modifiers: winit::keyboard::ModifiersState,
     last_paint_time: std::time::Instant,
@@ -75,7 +74,6 @@ impl App {
                 .with_visible(false)
                 .with_window_level(winit::window::WindowLevel::AlwaysOnTop),
             cursor_pos: (0, 0),
-            window_size: (0, 0),
             is_clicked: false,
             modifiers: winit::keyboard::ModifiersState::empty(),
             last_paint_time: std::time::Instant::now(),

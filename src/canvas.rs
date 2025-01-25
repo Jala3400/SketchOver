@@ -130,8 +130,8 @@ impl Canvas {
     pub fn resize(&mut self, width: i32, height: i32) {
         let width_n = std::num::NonZeroU32::new(width as u32).unwrap();
         let height_n = std::num::NonZeroU32::new(height as u32).unwrap();
-
         let _ = self.surface.resize(width_n, height_n);
+
         if let Ok(mut buffer) = self.surface.buffer_mut() {
             let (old_width, old_height) = self.window_size;
 
