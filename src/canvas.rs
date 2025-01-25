@@ -1,3 +1,4 @@
+use crate::app::Colors;
 use softbuffer::Surface;
 use std::rc::Rc;
 use winit::window::Window;
@@ -5,6 +6,7 @@ use winit::window::Window;
 pub struct Canvas {
     drawing: Vec<u32>,
     surface: Surface<Rc<Window>, Rc<Window>>,
+    background_color: Colors,
     window_size: (i32, i32),
 }
 
@@ -13,6 +15,7 @@ impl Canvas {
         Canvas {
             drawing: vec![0; (window_size.0 * window_size.1) as usize],
             surface: surface,
+            background_color: Colors::TRANSPARENT,
             window_size,
         }
     }
@@ -122,17 +125,23 @@ impl Canvas {
         }
     }
 
-    // fn rerender(&mut self) {
-    //     if let Ok(mut buffer) = self.surface.buffer_mut() {
-    //         buffer
-    //             .iter_mut()
-    //             .for_each(|x| *x = self.background_color as u32);
-    //         self.drawing
-    //             .iter()
-    //             .enumerate()
-    //             .for_each(|(i, x)| buffer[i] = *x);
-    //     }
-    // }
+    pub fn set_background_color(&mut self, color: Colors) {
+        self.background_color = color;
+        self.rerender();
+    }
+
+    fn rerender(&mut self) {
+        if let Ok(mut buffer) = self.surface.buffer_mut() {
+            buffer
+                .iter_mut()
+                .for_each(|x| *x = self.background_color as u32);
+            self.drawing
+                .iter()
+                .enumerate()
+                .filter(|(_, x)| **x != 0)
+                .for_each(|(i, x)| buffer[i] = *x);
+        }
+    }
 
     pub fn redraw(&mut self) {
         if let Ok(buffer) = self.surface.buffer_mut() {

@@ -1,4 +1,4 @@
-use super::{App, Colors};
+use super::{App, Colors, Mode};
 use winit::{
     event::{ElementState, KeyEvent, MouseButton, WindowEvent},
     event_loop::ActiveEventLoop,
@@ -53,6 +53,55 @@ impl App {
                             }
                         }
 
+                        ModifiersState::CONTROL => match key_code {
+                            KeyCode::KeyR => {
+                                self.set_backgroudn_color(Colors::RED);
+                                self.window.as_ref().unwrap().request_redraw();
+                            }
+
+                            KeyCode::KeyG => {
+                                self.set_backgroudn_color(Colors::GREEN);
+                                self.window.as_ref().unwrap().request_redraw();
+                            }
+
+                            KeyCode::KeyB => {
+                                self.set_backgroudn_color(Colors::BLUE);
+                                self.window.as_ref().unwrap().request_redraw();
+                            }
+
+                            KeyCode::KeyY => {
+                                self.set_backgroudn_color(Colors::YELLOW);
+                                self.window.as_ref().unwrap().request_redraw();
+                            }
+
+                            KeyCode::KeyC => {
+                                self.set_backgroudn_color(Colors::CYAN);
+                                self.window.as_ref().unwrap().request_redraw();
+                            }
+
+                            KeyCode::KeyM => {
+                                self.set_backgroudn_color(Colors::MAGENTA);
+                                self.window.as_ref().unwrap().request_redraw();
+                            }
+
+                            KeyCode::KeyW => {
+                                self.set_backgroudn_color(Colors::WHITE);
+                                self.window.as_ref().unwrap().request_redraw();
+                            }
+
+                            KeyCode::KeyK => {
+                                self.set_backgroudn_color(Colors::BLACK);
+                                self.window.as_ref().unwrap().request_redraw();
+                            }
+
+                            KeyCode::Space => {
+                                self.set_backgroudn_color(Colors::TRANSPARENT);
+                                self.window.as_ref().unwrap().request_redraw();
+                            }
+
+                            _ => (),
+                        },
+
                         _ => {
                             match key_code {
                                 KeyCode::Escape => {
@@ -82,38 +131,35 @@ impl App {
                                 }
 
                                 KeyCode::KeyR => {
-                                    self.set_mode(event_loop, super::Mode::Drawing(Colors::RED));
+                                    self.set_mode(event_loop, Mode::Drawing(Colors::RED));
                                 }
 
                                 KeyCode::KeyG => {
-                                    self.set_mode(event_loop, super::Mode::Drawing(Colors::GREEN));
+                                    self.set_mode(event_loop, Mode::Drawing(Colors::GREEN));
                                 }
 
                                 KeyCode::KeyB => {
-                                    self.set_mode(event_loop, super::Mode::Drawing(Colors::BLUE));
+                                    self.set_mode(event_loop, Mode::Drawing(Colors::BLUE));
                                 }
 
                                 KeyCode::KeyY => {
-                                    self.set_mode(event_loop, super::Mode::Drawing(Colors::YELLOW));
+                                    self.set_mode(event_loop, Mode::Drawing(Colors::YELLOW));
                                 }
 
                                 KeyCode::KeyC => {
-                                    self.set_mode(event_loop, super::Mode::Drawing(Colors::CYAN));
+                                    self.set_mode(event_loop, Mode::Drawing(Colors::CYAN));
                                 }
 
                                 KeyCode::KeyM => {
-                                    self.set_mode(
-                                        event_loop,
-                                        super::Mode::Drawing(Colors::MAGENTA),
-                                    );
+                                    self.set_mode(event_loop, Mode::Drawing(Colors::MAGENTA));
                                 }
 
                                 KeyCode::KeyW => {
-                                    self.set_mode(event_loop, super::Mode::Drawing(Colors::WHITE));
+                                    self.set_mode(event_loop, Mode::Drawing(Colors::WHITE));
                                 }
 
                                 KeyCode::KeyK => {
-                                    self.set_mode(event_loop, super::Mode::Drawing(Colors::BLACK));
+                                    self.set_mode(event_loop, Mode::Drawing(Colors::BLACK));
                                 }
 
                                 KeyCode::Space => {

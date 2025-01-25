@@ -121,6 +121,10 @@ impl App {
         self.update_circle_cursor(event_loop);
     }
 
+    fn set_backgroudn_color(&mut self, color: Colors) {
+        self.canvas.as_mut().unwrap().set_background_color(color);
+    }
+
     pub fn set_window_visibility(&self, visible: bool) {
         if let Some(window) = &self.window {
             window.set_visible(visible);
