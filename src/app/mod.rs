@@ -125,6 +125,14 @@ impl App {
         self.window.as_ref().unwrap().request_redraw();
     }
 
+    fn show_window(&self) {
+        self.set_window_visibility(true);
+    }
+
+    fn hide_window(&self) {
+        self.set_window_visibility(false);
+    }
+
     pub fn set_window_visibility(&self, visible: bool) {
         if let Some(window) = &self.window {
             window.set_visible(visible);
@@ -150,7 +158,7 @@ impl App {
             }
         }
 
-        self.set_window_visibility(true);
+        self.show_window();
     }
 
     fn assign_monitor(&self, monitor: &winit::monitor::MonitorHandle) {

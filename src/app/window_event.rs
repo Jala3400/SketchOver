@@ -95,7 +95,7 @@ impl App {
                         _ => {
                             match key_code {
                                 KeyCode::Escape => {
-                                    self.set_window_visibility(false);
+                                    self.hide_window();
                                 }
 
                                 KeyCode::Tab => {

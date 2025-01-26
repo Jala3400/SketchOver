@@ -13,16 +13,16 @@ impl App {
                     rect: _,
                     button: _,
                 } => {
-                    self.set_window_visibility(true);
+                    self.show_window();
                 }
                 _ => (),
             },
             UserEvent::MenuEvent(event) => match event.id.0.as_str() {
                 "Show" => {
-                    self.set_window_visibility(true);
+                    self.show_window();
                 }
                 "Hide" => {
-                    self.set_window_visibility(false);
+                    self.hide_window();
                 }
                 "Exit" => {
                     _event_loop.exit();
