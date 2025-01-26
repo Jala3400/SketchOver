@@ -53,7 +53,8 @@ Esto iniciará la aplicación en segundo plano, por lo que se verá un icono de 
 
 Al pulsar este icono se mostrarán varias opciones junto con sus atajos de teclado:
 
--   Show: Entra el modo dibujo (Ctrl+Alt+S).
+-   New canvas: Entra en modo dibujo con un canvas en blanco (Ctrl+Alt+S).
+-   Show: Entra el modo dibujo con el canvas anterior (Ctrl+Alt+Shift+S).
 -   Hide: Oculta el dibujo (Esc).
 -   Exit: Cierra la aplicación (Ctrl+Alt+Q).
 
@@ -89,15 +90,15 @@ Para borrar se pulsa el espacio. Si se pulsa Ctrl+espacio el color de fondo volv
 
 Se puede cambiar el monitor en el que está el dibujo de varias maneras:
 
-- Tab: Al pulsar el tabulador se cambiará el monitor en el que está manteniendo el dibujo
-- Ctrl+Alt+S: (Borra el dibujo) Es el comando con el que se muestra la aplicación. La iniciará en el monitor en el que se esté.
-- Ctrl+Alt+Shift+S: (No borra el dibujo). Moverá la ventana al monitor correspondiente.
+-   Tab: Al pulsar el tabulador se cambiará el monitor en el que está manteniendo el dibujo
+-   Ctrl+Alt+S: (Borra el dibujo) Es el comando con el que se muestra la aplicación. La iniciará en el monitor en el que se esté.
+-   Ctrl+Alt+Shift+S: (No borra el dibujo). Moverá la ventana al monitor correspondiente.
 
 # Información útil:
 
 Aunque no lo parezca, esta aplicación no pone la ventana en pantalla completa. Solo ha sido comprobado en Windows 10, pero si se pone en pantalla completa no se ve lo que hay detrás porque se pone en negro, seguramente porque el manejador de ventanas ahorra recursos porque hay una ventana que ocupa todo el monitor.
 
-Esto se soluciona poniendo el tamaño de la ventana como el del monitor menos 1 pixel de altura. Sim embargo, algunas aplicaciones (como discord o youtube) dejan de actualizarse cuando hay otra ventana que las está tapando. 
+Esto se soluciona poniendo el tamaño de la ventana como el del monitor menos 1 pixel de altura. Sim embargo, algunas aplicaciones (como discord o youtube) dejan de actualizarse cuando hay otra ventana que las está tapando.
 
 Es por esto por lo que se la ventana se pone en la posición (1, 1) en vez de la (0, 0) y tiene una altura y una anchura 2 píxeles menor a la del monitor (1 píxel por cada lado). Esto simulará un margen de 1 pixel de la ventana con respecto al monitor.
 
