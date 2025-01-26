@@ -12,8 +12,8 @@ struct HotkeyAction {
 }
 
 pub enum HotkeyEvent {
-    Show,
-    ShowPreserve,
+    ShowNew,
+    ShowPrevious,
 }
 
 impl HotkeyAction {
@@ -42,7 +42,7 @@ impl HotkeyManager {
             HotkeyAction::new(
                 "Show".to_string(),
                 HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyS),
-                HotkeyEvent::Show,
+                HotkeyEvent::ShowNew,
             ),
             HotkeyAction::new(
                 "ShowPreserved".to_string(),
@@ -50,7 +50,7 @@ impl HotkeyManager {
                     Some(Modifiers::CONTROL | Modifiers::ALT | Modifiers::SHIFT),
                     Code::KeyS,
                 ),
-                HotkeyEvent::ShowPreserve,
+                HotkeyEvent::ShowPrevious,
             ),
         ];
 
