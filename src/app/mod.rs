@@ -122,6 +122,7 @@ impl App {
 
     fn set_backgroudn_color(&mut self, color: Colors) {
         self.canvas.as_mut().unwrap().set_background_color(color);
+        self.window.as_ref().unwrap().request_redraw();
     }
 
     pub fn set_window_visibility(&self, visible: bool) {

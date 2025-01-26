@@ -55,47 +55,38 @@ impl App {
                         ModifiersState::CONTROL => match key_code {
                             KeyCode::KeyR => {
                                 self.set_backgroudn_color(Colors::RED);
-                                self.window.as_ref().unwrap().request_redraw();
                             }
 
                             KeyCode::KeyG => {
                                 self.set_backgroudn_color(Colors::GREEN);
-                                self.window.as_ref().unwrap().request_redraw();
                             }
 
                             KeyCode::KeyB => {
                                 self.set_backgroudn_color(Colors::BLUE);
-                                self.window.as_ref().unwrap().request_redraw();
                             }
 
                             KeyCode::KeyY => {
                                 self.set_backgroudn_color(Colors::YELLOW);
-                                self.window.as_ref().unwrap().request_redraw();
                             }
 
                             KeyCode::KeyC => {
                                 self.set_backgroudn_color(Colors::CYAN);
-                                self.window.as_ref().unwrap().request_redraw();
                             }
 
                             KeyCode::KeyM => {
                                 self.set_backgroudn_color(Colors::MAGENTA);
-                                self.window.as_ref().unwrap().request_redraw();
                             }
 
                             KeyCode::KeyW => {
                                 self.set_backgroudn_color(Colors::WHITE);
-                                self.window.as_ref().unwrap().request_redraw();
                             }
 
                             KeyCode::KeyK => {
                                 self.set_backgroudn_color(Colors::BLACK);
-                                self.window.as_ref().unwrap().request_redraw();
                             }
 
                             KeyCode::Space => {
                                 self.set_backgroudn_color(Colors::TRANSPARENT);
-                                self.window.as_ref().unwrap().request_redraw();
                             }
 
                             _ => (),
