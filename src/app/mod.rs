@@ -134,6 +134,29 @@ impl App {
         self.window.as_ref().unwrap().request_redraw();
     }
 
+    pub fn cursor_moved(&mut self, x: f64, y: f64) {
+        let x = x as i32;
+        let y = y as i32;
+        if self.is_clicked {
+            let now = std::time::Instant::now();
+            let elapsed = now - self.last_paint_time;
+
+            if elapsed.as_millis() >= 7 {
+                self.canvas.as_mut().unwrap().paint_line(
+                    self.cursor_pos.0,
+                    self.cursor_pos.1,
+                    x,
+                    y,
+                );
+                self.window.as_ref().unwrap().request_redraw();
+                self.last_paint_time = now;
+                self.cursor_pos = (x, y);
+            }
+        } else {
+            self.cursor_pos = (x, y);
+        }
+    }
+
     fn show_window(&self) {
         self.set_window_visibility(true);
     }
