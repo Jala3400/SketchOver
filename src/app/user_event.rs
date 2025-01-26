@@ -13,17 +13,16 @@ impl App {
                     rect: _,
                     button: _,
                 } => {
-                    let window = self.window.as_ref().unwrap();
-                    window.set_visible(!window.is_visible().unwrap_or(true));
+                    self.set_window_visibility(true);
                 }
                 _ => (),
             },
             UserEvent::MenuEvent(event) => match event.id.0.as_str() {
                 "Show" => {
-                    self.window.as_ref().unwrap().set_visible(true);
+                    self.set_window_visibility(true);
                 }
                 "Hide" => {
-                    self.window.as_ref().unwrap().set_visible(false);
+                    self.set_window_visibility(false);
                 }
                 "Exit" => {
                     _event_loop.exit();
