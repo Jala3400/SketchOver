@@ -158,11 +158,7 @@ impl App {
                 }
             }
             WindowEvent::Resized(size) => {
-                self.canvas
-                    .as_mut()
-                    .unwrap()
-                    .resize(size.width as i32, size.height as i32);
-                self.window.as_ref().unwrap().request_redraw();
+                self.resize(size.width, size.height);
             }
 
             WindowEvent::MouseInput { state, button, .. } => {

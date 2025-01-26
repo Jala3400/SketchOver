@@ -126,6 +126,14 @@ impl App {
         self.window.as_ref().unwrap().request_redraw();
     }
 
+    pub fn resize(&mut self, width: u32, height: u32) {
+        self.canvas
+            .as_mut()
+            .unwrap()
+            .resize(width as i32, height as i32);
+        self.window.as_ref().unwrap().request_redraw();
+    }
+
     fn show_window(&self) {
         self.set_window_visibility(true);
     }
