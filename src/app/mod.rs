@@ -9,6 +9,7 @@ use mouse_position::mouse_position::Mouse;
 use std::rc::Rc;
 use winit::{
     event_loop::{ActiveEventLoop, EventLoopProxy},
+    monitor::MonitorHandle,
     platform::windows::WindowAttributesExtWindows,
     window::{Window, WindowAttributes},
 };
@@ -136,6 +137,29 @@ impl App {
     pub fn set_window_visibility(&self, visible: bool) {
         if let Some(window) = &self.window {
             window.set_visible(visible);
+        }
+    }
+
+    pub fn cycle_through_monitors(&mut self) {
+        if let Some(window) = &self.window {
+            let current_monitor = window
+                .current_monitor()
+                .unwrap_or_else(|| window.primary_monitor().unwrap());
+            let all_monitors: Vec<MonitorHandle> = window.available_monitors().collect();
+
+            if !all_monitors.is_empty() {
+                // Find current monitor index
+                let current_idx = all_monitors
+                    .iter()
+                    .position(|m| m.name() == current_monitor.name())
+                    .unwrap_or(0);
+
+                // Get next monitor (wrap around to first if at end)
+                let next_idx = (current_idx + 1) % all_monitors.len();
+                let next_monitor = &all_monitors[next_idx];
+
+                self.assign_monitor(next_monitor);
+            }
         }
     }
 
