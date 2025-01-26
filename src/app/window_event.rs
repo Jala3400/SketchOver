@@ -1,6 +1,6 @@
 use super::{App, Colors, Mode};
 use winit::{
-    event::{ElementState, KeyEvent, MouseButton, WindowEvent},
+    event::{ElementState, KeyEvent, WindowEvent},
     event_loop::ActiveEventLoop,
     keyboard::{KeyCode, ModifiersState, PhysicalKey},
     window::WindowId,
@@ -145,26 +145,7 @@ impl App {
             }
 
             WindowEvent::MouseInput { state, button, .. } => {
-                if state == ElementState::Pressed {
-                    match button {
-                        MouseButton::Left => {
-                            self.is_clicked = true;
-                            self.canvas
-                                .as_mut()
-                                .unwrap()
-                                .paint_circle(self.cursor_pos.0 as i32, self.cursor_pos.1 as i32);
-                            self.window.as_ref().unwrap().request_redraw();
-                        }
-                        _ => (),
-                    }
-                } else {
-                    match button {
-                        MouseButton::Left => {
-                            self.is_clicked = false;
-                        }
-                        _ => (),
-                    }
-                }
+                self.mouse_pressed(state, button);
             }
 
             WindowEvent::CloseRequested => event_loop.exit(),

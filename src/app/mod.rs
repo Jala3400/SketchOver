@@ -8,6 +8,7 @@ use global_hotkey::GlobalHotKeyEvent;
 use mouse_position::mouse_position::Mouse;
 use std::rc::Rc;
 use winit::{
+    event::{ElementState, MouseButton},
     event_loop::{ActiveEventLoop, EventLoopProxy},
     monitor::MonitorHandle,
     platform::windows::WindowAttributesExtWindows,
@@ -154,6 +155,29 @@ impl App {
             }
         } else {
             self.cursor_pos = (x, y);
+        }
+    }
+
+    pub fn mouse_pressed(&mut self, state: ElementState, button: MouseButton) {
+        if state == ElementState::Pressed {
+            match button {
+                MouseButton::Left => {
+                    self.is_clicked = true;
+                    self.canvas
+                        .as_mut()
+                        .unwrap()
+                        .paint_circle(self.cursor_pos.0 as i32, self.cursor_pos.1 as i32);
+                    self.window.as_ref().unwrap().request_redraw();
+                }
+                _ => (),
+            }
+        } else {
+            match button {
+                MouseButton::Left => {
+                    self.is_clicked = false;
+                }
+                _ => (),
+            }
         }
     }
 
