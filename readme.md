@@ -1,6 +1,6 @@
 # Sketch Over
 
-Es una aplicación usada para dibujar encima de la pantalla. Está inspirada en la aplicación para windows "ZoomIt" de Microsoft (https://docs.microsoft.com/en-us/sysinternals/downloads/zoomit). Solo la parte de dibujar.
+Es una aplicación usada para dibujar encima de la pantalla. Está inspirada en la aplicación para windows ["ZoomIt"](https://docs.microsoft.com/en-us/sysinternals/downloads/zoomit) de Microsoft. Solo la parte de dibujar.
 
 Ofrece como ventajas:
 
@@ -96,6 +96,6 @@ Se puede cambiar el monitor en el que está el dibujo de varias maneras:
 
 # Otros:
 
-Hay aplicaciones (como youtube o compartir pantalla en discord) que dejarán de actualizarse si están completamente cubiertas por el canvas. 
+Hay aplicaciones (como youtube o compartir pantalla en discord) que dejarán de actualizarse si están completamente cubiertas por el canvas.
 
 El canvas tiene un márgen de 1 pixel por cada lado, por lo que si la aplicación toca un borde no debería haber problemas.
