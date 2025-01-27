@@ -6,8 +6,8 @@ Ofrece como ventajas:
 
 -   Se ve actualizarse la pantalla de detrás.
 -   Se puede borrar lo dibujado.
--   Se puede conservar lo dibujado después de ocultarlo
--   Se puede cambiar el color del fondo.
+-   Se puede conservar lo dibujado después de ocultarlo (no después de cerrar la aplicación).
+-   Se puede cambiar el color del fondo sin borrar lo dibujado.
 
 # Índice
 
@@ -19,7 +19,7 @@ Ofrece como ventajas:
   - [Dibujar:](#dibujar)
   - [Cambiar colores:](#cambiar-colores)
   - [Cambiar monitores:](#cambiar-monitores)
-- [Información útil:](#información-útil)
+- [Otros:](#otros)
 
 # Instalación
 
@@ -94,12 +94,8 @@ Se puede cambiar el monitor en el que está el dibujo de varias maneras:
 -   Ctrl+Alt+S: (Borra el dibujo) Es el comando con el que se muestra la aplicación. La iniciará en el monitor en el que se esté.
 -   Ctrl+Alt+Shift+S: (No borra el dibujo). Moverá la ventana al monitor correspondiente.
 
-# Información útil:
+# Otros:
 
-Aunque no lo parezca, esta aplicación no pone la ventana en pantalla completa. Solo ha sido comprobado en Windows 10, pero si se pone en pantalla completa no se ve lo que hay detrás porque se pone en negro, seguramente porque el manejador de ventanas ahorra recursos porque hay una ventana que ocupa todo el monitor.
+Hay aplicaciones (como youtube o compartir pantalla en discord) que dejarán de actualizarse si están completamente cubiertas por el canvas. 
 
-Esto se soluciona poniendo el tamaño de la ventana como el del monitor menos 1 pixel de altura. Sim embargo, algunas aplicaciones (como discord o youtube) dejan de actualizarse cuando hay otra ventana que las está tapando.
-
-Es por esto por lo que se la ventana se pone en la posición (1, 1) en vez de la (0, 0) y tiene una altura y una anchura 2 píxeles menor a la del monitor (1 píxel por cada lado). Esto simulará un margen de 1 pixel de la ventana con respecto al monitor.
-
-El que las aplicaciones completamente ocultas tras la ventana se actualicen o no dependerá del manejador de ventanas.
+El canvas tiene un márgen de 1 pixel por cada lado, por lo que si la aplicación toca un borde no debería haber problemas.
