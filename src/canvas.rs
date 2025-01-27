@@ -99,29 +99,25 @@ impl Canvas {
         }
     }
 
+    #[inline]
     fn draw_horizontal_line(&mut self, x1: i32, x2: i32, y: i32) {
-        let (width, height) = self.window_size;
-        if y < 0 || y >= height {
-            return;
-        }
-
-        let start_x = x1.max(0).min(width - 1);
-        let end_x = x2.max(0).min(width - 1);
-
         if let Ok(mut buffer) = self.surface.buffer_mut() {
-            for x in start_x..=end_x {
-                let index = (y * width + x) as usize;
-                match self.mode {
-                    Mode::Drawing(color) => {
-                        self.drawing[index] = color as u32;
-                        buffer[index] = color as u32;
-                    }
-                    Mode::Erasing(_) => {
-                        self.drawing[index] = 0;
-                        buffer[index] = self.background_color as u32;
-                    }
-                }
+            let (width, height) = self.window_size;
+            if y < 0 || y >= height {
+                return;
             }
+
+            let start_x = (y * self.window_size.0 + x1.max(0).min(width - 1)) as usize;
+            let end_x = (y * self.window_size.0 + x2.max(0).min(width - 1)) as usize;
+
+            let (drawing_color, buffer_color) = if let Mode::Drawing(color) = self.mode {
+                (color as u32, color as u32)
+            } else {
+                (0, self.background_color as u32)
+            };
+
+            self.drawing[start_x..end_x].fill(drawing_color);
+            buffer[start_x..end_x].fill(buffer_color);
         }
     }
 
