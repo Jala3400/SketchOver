@@ -83,14 +83,10 @@ impl Canvas {
         let mut decision = 1 - radius;
 
         while x >= y {
-            for i in -x..=x {
-                self.paint_pixel(center_x + i, center_y + y);
-                self.paint_pixel(center_x + i, center_y - y);
-            }
-            for i in -y..=y {
-                self.paint_pixel(center_x + i, center_y + x);
-                self.paint_pixel(center_x + i, center_y - x);
-            }
+            self.draw_horizontal_line(center_x - x, center_x + x, center_y + y);
+            self.draw_horizontal_line(center_x - x, center_x + x, center_y - y);
+            self.draw_horizontal_line(center_x - y, center_x + y, center_y + x);
+            self.draw_horizontal_line(center_x - y, center_x + y, center_y - x);
 
             y += 1;
 
@@ -103,25 +99,27 @@ impl Canvas {
         }
     }
 
-    fn paint_pixel(&mut self, x: i32, y: i32) {
+    fn draw_horizontal_line(&mut self, x1: i32, x2: i32, y: i32) {
+        let (width, height) = self.window_size;
+        if y < 0 || y >= height {
+            return;
+        }
+
+        let start_x = x1.max(0).min(width - 1);
+        let end_x = x2.max(0).min(width - 1);
+
         if let Ok(mut buffer) = self.surface.buffer_mut() {
-            let (width, height) = self.window_size;
-
-            // Bounds checking
-            if x < 0 || y < 0 || x >= width || y >= height {
-                return;
-            }
-
-            let index = (y * width + x) as usize;
-
-            match self.mode {
-                Mode::Drawing(color) => {
-                    self.drawing[index] = color as u32;
-                    buffer[index] = color as u32;
-                }
-                Mode::Erasing(_) => {
-                    self.drawing[index] = 0;
-                    buffer[index] = self.background_color as u32;
+            for x in start_x..=end_x {
+                let index = (y * width + x) as usize;
+                match self.mode {
+                    Mode::Drawing(color) => {
+                        self.drawing[index] = color as u32;
+                        buffer[index] = color as u32;
+                    }
+                    Mode::Erasing(_) => {
+                        self.drawing[index] = 0;
+                        buffer[index] = self.background_color as u32;
+                    }
                 }
             }
         }
@@ -181,10 +179,6 @@ impl Canvas {
 
     pub fn redraw(&mut self) {
         if let Ok(buffer) = self.surface.buffer_mut() {
-            // Copy canvas buffer into pixels frame
-            // buffer.copy_from_slice(self.canvas.buffer());
-
-            // Render the frame
             let _ = buffer.present();
         }
     }
