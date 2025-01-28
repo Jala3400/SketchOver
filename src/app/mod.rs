@@ -286,21 +286,19 @@ impl App {
     }
 
     fn toggle_transparent_to_mouse(&mut self) {
-        self.transparent_to_mouse = !self.transparent_to_mouse;
-        self.canvas
-            .as_mut()
-            .unwrap()
-            .set_opacity(if self.transparent_to_mouse { 64 } else { 255 });
-        if !self.transparent_to_mouse {
-            self.window.as_ref().unwrap().focus_window();
-        }
-        let _ = self
-            .window
-            .as_ref()
-            .unwrap()
-            .set_cursor_hittest(!self.transparent_to_mouse);
+        if let (Some(window), Some(canvas)) = (self.window.as_ref(), self.canvas.as_mut()) {
+            self.transparent_to_mouse = !self.transparent_to_mouse;
 
-        self.window.as_ref().unwrap().request_redraw();
+            // Set canvas opacity based on transparency
+            canvas.set_opacity(if self.transparent_to_mouse { 64 } else { 255 });
+
+            if !self.transparent_to_mouse {
+                window.focus_window();
+            }
+
+            let _ = window.set_cursor_hittest(!self.transparent_to_mouse);
+            window.request_redraw();
+        }
     }
 }
 
