@@ -19,8 +19,7 @@ impl App {
             },
             UserEvent::MenuEvent(event) => match event.id.0.as_str() {
                 "New canvas" => {
-                    self.canvas.as_mut().unwrap().clear();
-                    self.show_window();
+                    self.show_new_window();
                 }
                 "Show previous" => {
                     self.show_window();
@@ -40,8 +39,7 @@ impl App {
                 // Then execute the action
                 match hotkey_event {
                     HotkeyEvent::ShowNew => {
-                        self.canvas.as_mut().unwrap().clear();
-                        self.show_window_in_current_monitor();
+                        self.show_new_window_in_current_monitor();
                     }
                     HotkeyEvent::ShowPrevious => {
                         self.show_window_in_current_monitor();

@@ -93,6 +93,7 @@ impl App {
 
                             KeyCode::Tab => {
                                 self.cycle_through_monitors();
+                                self.tab_pressed = true;
                             }
 
                             KeyCode::KeyR => {
@@ -133,6 +134,14 @@ impl App {
 
                             _ => (),
                         },
+                    }
+                } else {
+                    match key_code {
+                        KeyCode::Tab => {
+                            self.tab_pressed = false;
+                        }
+
+                        _ => (),
                     }
                 }
             }

@@ -55,6 +55,7 @@ pub struct App {
     attributes: WindowAttributes,
     cursor_pos: (i32, i32),
     is_clicked: bool,
+    tab_pressed: bool,
     modifiers: winit::keyboard::ModifiersState,
     last_paint_time: std::time::Instant,
 }
@@ -77,6 +78,7 @@ impl App {
                 .with_window_level(winit::window::WindowLevel::AlwaysOnTop),
             cursor_pos: (0, 0),
             is_clicked: false,
+            tab_pressed: false,
             modifiers: winit::keyboard::ModifiersState::empty(),
             last_paint_time: std::time::Instant::now(),
         }
@@ -142,6 +144,7 @@ impl App {
             let now = std::time::Instant::now();
             let elapsed = now - self.last_paint_time;
 
+            // Throttle paint
             if elapsed.as_millis() >= 7 {
                 self.canvas.as_mut().unwrap().paint_line(
                     self.cursor_pos.0,
@@ -181,6 +184,14 @@ impl App {
         }
     }
 
+    fn show_new_window(&mut self) {
+        if let Some(canvas) = &mut self.canvas {
+            canvas.clear();
+            canvas.redraw();
+        }
+        self.show_window();
+    }
+
     fn show_window(&self) {
         self.set_window_visibility(true);
     }
@@ -196,26 +207,36 @@ impl App {
     }
 
     pub fn cycle_through_monitors(&mut self) {
-        if let Some(window) = &self.window {
-            let current_monitor = window
-                .current_monitor()
-                .unwrap_or_else(|| window.primary_monitor().unwrap());
-            let all_monitors: Vec<MonitorHandle> = window.available_monitors().collect();
+        if !self.tab_pressed {
+            if let Some(window) = &self.window {
+                let current_monitor = window
+                    .current_monitor()
+                    .unwrap_or_else(|| window.primary_monitor().unwrap());
+                let all_monitors: Vec<MonitorHandle> = window.available_monitors().collect();
 
-            if !all_monitors.is_empty() {
-                // Find current monitor index
-                let current_idx = all_monitors
-                    .iter()
-                    .position(|m| m.name() == current_monitor.name())
-                    .unwrap_or(0);
+                if !all_monitors.is_empty() {
+                    // Find current monitor index
+                    let current_idx = all_monitors
+                        .iter()
+                        .position(|m| m.name() == current_monitor.name())
+                        .unwrap_or(0);
 
-                // Get next monitor (wrap around to first if at end)
-                let next_idx = (current_idx + 1) % all_monitors.len();
-                let next_monitor = &all_monitors[next_idx];
+                    // Get next monitor (wrap around to first if at end)
+                    let next_idx = (current_idx + 1) % all_monitors.len();
+                    let next_monitor = &all_monitors[next_idx];
 
-                self.assign_monitor(next_monitor);
+                    self.assign_monitor(next_monitor);
+                }
             }
         }
+    }
+
+    pub fn show_new_window_in_current_monitor(&mut self) {
+        if let Some(canvas) = &mut self.canvas {
+            canvas.clear();
+            canvas.redraw();
+        }
+        self.show_window_in_current_monitor();
     }
 
     pub fn show_window_in_current_monitor(&self) {
