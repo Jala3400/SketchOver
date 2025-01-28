@@ -184,6 +184,14 @@ impl App {
         }
     }
 
+    fn show_new_window(&mut self) {
+        if let Some(canvas) = &mut self.canvas {
+            canvas.clear();
+            canvas.redraw();
+        }
+        self.show_window();
+    }
+
     fn show_window(&self) {
         self.set_window_visibility(true);
     }
@@ -221,6 +229,14 @@ impl App {
                 }
             }
         }
+    }
+
+    pub fn show_new_window_in_current_monitor(&mut self) {
+        if let Some(canvas) = &mut self.canvas {
+            canvas.clear();
+            canvas.redraw();
+        }
+        self.show_window_in_current_monitor();
     }
 
     pub fn show_window_in_current_monitor(&self) {
