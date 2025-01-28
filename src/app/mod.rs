@@ -132,6 +132,11 @@ impl App {
         self.window.as_ref().unwrap().request_redraw();
     }
 
+    pub fn clear_canvas(&mut self) {
+        self.canvas.as_mut().unwrap().clear();
+        self.window.as_ref().unwrap().request_redraw();
+    }
+
     pub fn resize(&mut self, width: u32, height: u32) {
         self.canvas
             .as_mut()
@@ -187,11 +192,16 @@ impl App {
         }
     }
 
-    fn show_new_window(&mut self) {
+    fn reset(&mut self, event_loop: &ActiveEventLoop) {
         if let Some(canvas) = &mut self.canvas {
-            canvas.clear();
+            canvas.reset();
             canvas.redraw();
+            self.update_circle_cursor(event_loop);
         }
+    }
+
+    fn show_new_window(&mut self, event_loop: &ActiveEventLoop) {
+        self.reset(event_loop);
         self.show_window();
     }
 
@@ -234,11 +244,8 @@ impl App {
         }
     }
 
-    pub fn show_new_window_in_current_monitor(&mut self) {
-        if let Some(canvas) = &mut self.canvas {
-            canvas.clear();
-            canvas.redraw();
-        }
+    pub fn show_new_window_in_current_monitor(&mut self, event_loop: &ActiveEventLoop) {
+        self.reset(event_loop);
         self.show_window_in_current_monitor();
     }
 
