@@ -1,6 +1,6 @@
 use tray_icon::{
     menu::{IsMenuItem, Menu, MenuItemBuilder, PredefinedMenuItem},
-    TrayIconBuilder,
+    Icon, TrayIconBuilder,
 };
 use winit::event_loop::EventLoopProxy;
 
@@ -63,10 +63,24 @@ pub fn setup_tray_icon(proxy: &EventLoopProxy<UserEvent>) -> tray_icon::TrayIcon
             .unwrap();
     }));
 
+    // Embed the icon file
+    let icon_data: &[u8] = include_bytes!("../assets/icon.ico");
+
+    let icon_image = ico::IconDir::read(std::io::Cursor::new(icon_data))
+        .expect("Failed to read icon")
+        .entries()[0]
+        .decode()
+        .expect("Failed to decode icon")
+        .rgba_data()
+        .to_vec();
+
+    // Create the icon from the embedded data
+    let icon = Icon::from_rgba(icon_image, 32, 32).expect("Failed to create icon");
+
     let tray_icon = TrayIconBuilder::new()
         .with_menu(Box::new(tray_menu))
         .with_tooltip("SketchOver")
-        .with_icon(tray_icon::Icon::from_path("assets/icon.ico", Some((32, 32))).unwrap())
+        .with_icon(icon)
         .build()
         .unwrap();
     tray_icon
