@@ -56,6 +56,7 @@ pub struct App {
     cursor_pos: (i32, i32),
     is_clicked: bool,
     tab_pressed: bool,
+    transparent_to_mouse: bool,
     modifiers: winit::keyboard::ModifiersState,
     last_paint_time: std::time::Instant,
 }
@@ -79,6 +80,7 @@ impl App {
             cursor_pos: (0, 0),
             is_clicked: false,
             tab_pressed: false,
+            transparent_to_mouse: false,
             modifiers: winit::keyboard::ModifiersState::empty(),
             last_paint_time: std::time::Instant::now(),
         }
@@ -280,6 +282,15 @@ impl App {
                 work_area.width - 2,
                 work_area.height - 2,
             ));
+    }
+
+    fn toggle_transparent_to_mouse(&mut self) {
+        self.transparent_to_mouse = !self.transparent_to_mouse;
+        let _ = self
+            .window
+            .as_ref()
+            .unwrap()
+            .set_cursor_hittest(!self.transparent_to_mouse);
     }
 }
 

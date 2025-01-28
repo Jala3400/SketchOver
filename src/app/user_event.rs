@@ -1,6 +1,7 @@
 use crate::hotkeys::HotkeyEvent;
 
 use super::{App, UserEvent};
+use global_hotkey::HotKeyState;
 use winit::event_loop::ActiveEventLoop;
 
 impl App {
@@ -33,16 +34,21 @@ impl App {
                 _ => (),
             },
             UserEvent::HotkeyEvent(event) => {
-                // First get the action name without borrowing self
-                let hotkey_event = self.hotkey_manager.get_hotkey_event(&event);
+                if event.state == HotKeyState::Pressed {
+                    // First get the action name without borrowing self
+                    let hotkey_event = self.hotkey_manager.get_hotkey_event(&event);
 
-                // Then execute the action
-                match hotkey_event {
-                    HotkeyEvent::ShowNew => {
-                        self.show_new_window_in_current_monitor();
-                    }
-                    HotkeyEvent::ShowPrevious => {
-                        self.show_window_in_current_monitor();
+                    // Then execute the action
+                    match hotkey_event {
+                        HotkeyEvent::ShowNew => {
+                            self.show_new_window_in_current_monitor();
+                        }
+                        HotkeyEvent::ShowPrevious => {
+                            self.show_window_in_current_monitor();
+                        }
+                        HotkeyEvent::TransparentToMouse => {
+                            self.toggle_transparent_to_mouse();
+                        }
                     }
                 }
             }
