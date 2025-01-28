@@ -14,6 +14,7 @@ struct HotkeyAction {
 pub enum HotkeyEvent {
     ShowNew,
     ShowPrevious,
+    TransparentToMouse,
 }
 
 impl HotkeyAction {
@@ -51,6 +52,11 @@ impl HotkeyManager {
                     Code::KeyS,
                 ),
                 HotkeyEvent::ShowPrevious,
+            ),
+            HotkeyAction::new(
+                "TransparentToMouse".to_string(),
+                HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyT),
+                HotkeyEvent::TransparentToMouse,
             ),
         ];
 

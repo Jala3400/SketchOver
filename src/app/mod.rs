@@ -27,6 +27,7 @@ pub enum UserEvent {
 }
 
 #[derive(Debug, Clone, Copy)]
+#[repr(u32)]
 // ARGB format
 pub enum Colors {
     RED = 0xffff0000,
@@ -56,6 +57,7 @@ pub struct App {
     cursor_pos: (i32, i32),
     is_clicked: bool,
     tab_pressed: bool,
+    transparent_to_mouse: bool,
     modifiers: winit::keyboard::ModifiersState,
     last_paint_time: std::time::Instant,
 }
@@ -79,6 +81,7 @@ impl App {
             cursor_pos: (0, 0),
             is_clicked: false,
             tab_pressed: false,
+            transparent_to_mouse: false,
             modifiers: winit::keyboard::ModifiersState::empty(),
             last_paint_time: std::time::Instant::now(),
         }
@@ -126,6 +129,11 @@ impl App {
 
     fn set_backgroudn_color(&mut self, color: Colors) {
         self.canvas.as_mut().unwrap().set_background_color(color);
+        self.window.as_ref().unwrap().request_redraw();
+    }
+
+    pub fn clear_canvas(&mut self) {
+        self.canvas.as_mut().unwrap().clear();
         self.window.as_ref().unwrap().request_redraw();
     }
 
@@ -184,15 +192,23 @@ impl App {
         }
     }
 
-    fn show_new_window(&mut self) {
+    fn reset(&mut self, event_loop: &ActiveEventLoop) {
         if let Some(canvas) = &mut self.canvas {
-            canvas.clear();
+            canvas.reset();
             canvas.redraw();
+            self.update_circle_cursor(event_loop);
         }
+    }
+
+    fn show_new_window(&mut self, event_loop: &ActiveEventLoop) {
+        self.reset(event_loop);
         self.show_window();
     }
 
-    fn show_window(&self) {
+    fn show_window(&mut self) {
+        if self.transparent_to_mouse {
+            self.toggle_transparent_to_mouse();
+        }
         self.set_window_visibility(true);
     }
 
@@ -231,15 +247,12 @@ impl App {
         }
     }
 
-    pub fn show_new_window_in_current_monitor(&mut self) {
-        if let Some(canvas) = &mut self.canvas {
-            canvas.clear();
-            canvas.redraw();
-        }
+    pub fn show_new_window_in_current_monitor(&mut self, event_loop: &ActiveEventLoop) {
+        self.reset(event_loop);
         self.show_window_in_current_monitor();
     }
 
-    pub fn show_window_in_current_monitor(&self) {
+    pub fn show_window_in_current_monitor(&mut self) {
         let position = Mouse::get_mouse_position();
         if let Some(window) = &self.window {
             if let Mouse::Position { x, y } = position {
@@ -280,6 +293,22 @@ impl App {
                 work_area.width - 2,
                 work_area.height - 2,
             ));
+    }
+
+    fn toggle_transparent_to_mouse(&mut self) {
+        if let (Some(window), Some(canvas)) = (self.window.as_ref(), self.canvas.as_mut()) {
+            self.transparent_to_mouse = !self.transparent_to_mouse;
+
+            // Set canvas opacity based on transparency
+            canvas.set_opacity(if self.transparent_to_mouse { 64 } else { 255 });
+
+            if !self.transparent_to_mouse {
+                window.focus_window();
+            }
+
+            let _ = window.set_cursor_hittest(!self.transparent_to_mouse);
+            window.request_redraw();
+        }
     }
 }
 

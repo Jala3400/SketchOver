@@ -1,10 +1,11 @@
 use crate::hotkeys::HotkeyEvent;
 
 use super::{App, UserEvent};
+use global_hotkey::HotKeyState;
 use winit::event_loop::ActiveEventLoop;
 
 impl App {
-    pub fn user_event_func(&mut self, _event_loop: &ActiveEventLoop, event: UserEvent) {
+    pub fn user_event_func(&mut self, event_loop: &ActiveEventLoop, event: UserEvent) {
         match event {
             UserEvent::TrayIconEvent(_event) => match _event {
                 tray_icon::TrayIconEvent::DoubleClick {
@@ -18,8 +19,11 @@ impl App {
                 _ => (),
             },
             UserEvent::MenuEvent(event) => match event.id.0.as_str() {
+                "Transparent to mouse" => {
+                    self.toggle_transparent_to_mouse();
+                }
                 "New canvas" => {
-                    self.show_new_window();
+                    self.show_new_window(event_loop);
                 }
                 "Show previous" => {
                     self.show_window();
@@ -28,21 +32,26 @@ impl App {
                     self.hide_window();
                 }
                 "Exit" => {
-                    _event_loop.exit();
+                    event_loop.exit();
                 }
                 _ => (),
             },
             UserEvent::HotkeyEvent(event) => {
-                // First get the action name without borrowing self
-                let hotkey_event = self.hotkey_manager.get_hotkey_event(&event);
+                if event.state == HotKeyState::Pressed {
+                    // First get the action name without borrowing self
+                    let hotkey_event = self.hotkey_manager.get_hotkey_event(&event);
 
-                // Then execute the action
-                match hotkey_event {
-                    HotkeyEvent::ShowNew => {
-                        self.show_new_window_in_current_monitor();
-                    }
-                    HotkeyEvent::ShowPrevious => {
-                        self.show_window_in_current_monitor();
+                    // Then execute the action
+                    match hotkey_event {
+                        HotkeyEvent::ShowNew => {
+                            self.show_new_window_in_current_monitor(event_loop);
+                        }
+                        HotkeyEvent::ShowPrevious => {
+                            self.show_window_in_current_monitor();
+                        }
+                        HotkeyEvent::TransparentToMouse => {
+                            self.toggle_transparent_to_mouse();
+                        }
                     }
                 }
             }

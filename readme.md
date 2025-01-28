@@ -5,9 +5,18 @@ Es una aplicación usada para dibujar encima de la pantalla. Está inspirada en 
 Ofrece como ventajas:
 
 -   Se ve actualizarse la pantalla de detrás.
--   Se puede borrar lo dibujado.
--   Se puede conservar lo dibujado después de ocultarlo (no después de cerrar la aplicación).
+-   Se puede borrar.
+-   Se puede conservar el dibujo después de ocultarlo (no después de cerrar la aplicación).
 -   Se puede cambiar el color del fondo sin borrar lo dibujado.
+-   Opción de usar el mouse tras el canvas mientras se está dibujando (la ventana es transparente al mouse).
+
+Aún no ofrece:
+
+-   Lineas rectas, cuadrados, etc.
+-   Texto.
+-   Punter laser.
+-   Guardar el dibujo.
+-   Configuración.
 
 # Índice
 
@@ -53,12 +62,13 @@ Esto iniciará la aplicación en segundo plano, por lo que se verá un icono de 
 
 Al pulsar este icono se mostrarán varias opciones junto con sus atajos de teclado:
 
+-   Transparent to mouse: Permite usar el ratón detrás de la ventana de dibujo (Ctrl+Alt+T).
 -   New canvas: Entra en modo dibujo con un canvas en blanco (Ctrl+Alt+S).
 -   Show: Entra el modo dibujo con el canvas anterior (Ctrl+Alt+Shift+S).
 -   Hide: Oculta el dibujo (Esc).
 -   Exit: Cierra la aplicación (Ctrl+Alt+Q).
 
-Además, si se hace doble click en el icono o se pulsa (Ctrl+Alt+Shift+S) se abrirá el dibujo anterior.
+Además, si se hace doble click en el icono se abrirá el dibujo anterior.
 
 Cada acción se puede llamar tanto pulsando el botón como con el atajo de teclado.
 Los atajos de teclado se deben pulsar cuando la aplicación está en primer plano, excepto el de "Show" que se puede pulsar en cualquier momento.
@@ -68,6 +78,8 @@ Los atajos de teclado se deben pulsar cuando la aplicación está en primer plan
 Para dibujar se pulsa el botón izquierdo del ratón y se arrastra.
 
 Para cambiar el radio del pincel se usa la rueda del ratón.
+
+Para limpiar el canvas pulsa Ctrl+Alt+C.
 
 ## Cambiar colores:
 
