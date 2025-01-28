@@ -1,3 +1,4 @@
+#![windows_subsystem = "windows"]
 use sketchover::app::{App, UserEvent};
 use winit::{error::EventLoopError, event_loop::EventLoop};
 
