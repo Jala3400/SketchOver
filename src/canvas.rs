@@ -160,16 +160,39 @@ impl Canvas {
         self.rerender();
     }
 
+    pub fn set_opacity(&mut self, opacity: u8) {
+        if let Ok(mut buffer) = self.surface.buffer_mut() {
+            let bg_color = if self.background_color as u32 == 0 {
+                0
+            } else {
+                (self.background_color as u32 & 0x00FFFFFF) | ((opacity as u32) << 24)
+            };
+
+            buffer
+                .iter_mut()
+                .zip(self.drawing.iter())
+                .for_each(|(buf, &color)| {
+                    *buf = if color == 0 {
+                        bg_color
+                    } else {
+                        (color & 0x00FFFFFF) | ((opacity as u32) << 24)
+                    };
+                });
+        }
+    }
+
     fn rerender(&mut self) {
         if let Ok(mut buffer) = self.surface.buffer_mut() {
             buffer
                 .iter_mut()
-                .for_each(|x| *x = self.background_color as u32);
-            self.drawing
-                .iter()
-                .enumerate()
-                .filter(|(_, x)| **x != 0)
-                .for_each(|(i, x)| buffer[i] = *x);
+                .zip(self.drawing.iter())
+                .for_each(|(buf, &color)| {
+                    *buf = if color == 0 {
+                        self.background_color as u32
+                    } else {
+                        color
+                    };
+                });
         }
     }
 

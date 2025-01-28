@@ -27,6 +27,7 @@ pub enum UserEvent {
 }
 
 #[derive(Debug, Clone, Copy)]
+#[repr(u32)]
 // ARGB format
 pub enum Colors {
     RED = 0xffff0000,
@@ -56,6 +57,7 @@ pub struct App {
     cursor_pos: (i32, i32),
     is_clicked: bool,
     tab_pressed: bool,
+    transparent_to_mouse: bool,
     modifiers: winit::keyboard::ModifiersState,
     last_paint_time: std::time::Instant,
 }
@@ -79,6 +81,7 @@ impl App {
             cursor_pos: (0, 0),
             is_clicked: false,
             tab_pressed: false,
+            transparent_to_mouse: false,
             modifiers: winit::keyboard::ModifiersState::empty(),
             last_paint_time: std::time::Instant::now(),
         }
@@ -280,6 +283,22 @@ impl App {
                 work_area.width - 2,
                 work_area.height - 2,
             ));
+    }
+
+    fn toggle_transparent_to_mouse(&mut self) {
+        if let (Some(window), Some(canvas)) = (self.window.as_ref(), self.canvas.as_mut()) {
+            self.transparent_to_mouse = !self.transparent_to_mouse;
+
+            // Set canvas opacity based on transparency
+            canvas.set_opacity(if self.transparent_to_mouse { 64 } else { 255 });
+
+            if !self.transparent_to_mouse {
+                window.focus_window();
+            }
+
+            let _ = window.set_cursor_hittest(!self.transparent_to_mouse);
+            window.request_redraw();
+        }
     }
 }
 
