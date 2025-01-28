@@ -27,6 +27,7 @@ pub enum UserEvent {
 }
 
 #[derive(Debug, Clone, Copy)]
+#[repr(u32)]
 // ARGB format
 pub enum Colors {
     RED = 0xffff0000,
@@ -286,11 +287,20 @@ impl App {
 
     fn toggle_transparent_to_mouse(&mut self) {
         self.transparent_to_mouse = !self.transparent_to_mouse;
+        self.canvas
+            .as_mut()
+            .unwrap()
+            .set_opacity(if self.transparent_to_mouse { 64 } else { 255 });
+        if !self.transparent_to_mouse {
+            self.window.as_ref().unwrap().focus_window();
+        }
         let _ = self
             .window
             .as_ref()
             .unwrap()
             .set_cursor_hittest(!self.transparent_to_mouse);
+
+        self.window.as_ref().unwrap().request_redraw();
     }
 }
 
