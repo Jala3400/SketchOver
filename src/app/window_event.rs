@@ -79,7 +79,7 @@ impl App {
                                 self.set_backgroudn_color(Colors::WHITE);
                             }
 
-                            KeyCode::KeyK => {
+                            KeyCode::KeyK | KeyCode::KeyA => {
                                 self.set_backgroudn_color(Colors::BLACK);
                             }
 
@@ -128,7 +128,7 @@ impl App {
                                 self.set_mode(event_loop, Mode::Drawing(Colors::WHITE));
                             }
 
-                            KeyCode::KeyK => {
+                            KeyCode::KeyK | KeyCode::KeyA => {
                                 self.set_mode(event_loop, Mode::Drawing(Colors::BLACK));
                             }
 
