@@ -148,6 +148,14 @@ impl Canvas {
         }
     }
 
+    pub fn reset(&mut self) {
+        if let Ok(mut buffer) = self.surface.buffer_mut() {
+            buffer.fill(0);
+            self.drawing.fill(0);
+            self.background_color = Colors::TRANSPARENT;
+        }
+    }
+
     pub fn clear(&mut self) {
         if let Ok(mut buffer) = self.surface.buffer_mut() {
             self.drawing.iter_mut().for_each(|x| *x = 0);

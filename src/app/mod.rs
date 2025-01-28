@@ -194,7 +194,7 @@ impl App {
 
     fn show_new_window(&mut self) {
         if let Some(canvas) = &mut self.canvas {
-            canvas.clear();
+            canvas.reset();
             canvas.redraw();
         }
         self.show_window();
@@ -241,7 +241,7 @@ impl App {
 
     pub fn show_new_window_in_current_monitor(&mut self) {
         if let Some(canvas) = &mut self.canvas {
-            canvas.clear();
+            canvas.reset();
             canvas.redraw();
         }
         self.show_window_in_current_monitor();
