@@ -5,7 +5,7 @@ use global_hotkey::HotKeyState;
 use winit::event_loop::ActiveEventLoop;
 
 impl App {
-    pub fn user_event_func(&mut self, _event_loop: &ActiveEventLoop, event: UserEvent) {
+    pub fn user_event_func(&mut self, event_loop: &ActiveEventLoop, event: UserEvent) {
         match event {
             UserEvent::TrayIconEvent(_event) => match _event {
                 tray_icon::TrayIconEvent::DoubleClick {
@@ -23,7 +23,7 @@ impl App {
                     self.toggle_transparent_to_mouse();
                 }
                 "New canvas" => {
-                    self.show_new_window();
+                    self.show_new_window(event_loop);
                 }
                 "Show previous" => {
                     self.show_window();
@@ -32,7 +32,7 @@ impl App {
                     self.hide_window();
                 }
                 "Exit" => {
-                    _event_loop.exit();
+                    event_loop.exit();
                 }
                 _ => (),
             },
@@ -44,7 +44,7 @@ impl App {
                     // Then execute the action
                     match hotkey_event {
                         HotkeyEvent::ShowNew => {
-                            self.show_new_window_in_current_monitor();
+                            self.show_new_window_in_current_monitor(event_loop);
                         }
                         HotkeyEvent::ShowPrevious => {
                             self.show_window_in_current_monitor();

@@ -192,11 +192,16 @@ impl App {
         }
     }
 
-    fn show_new_window(&mut self) {
+    fn reset(&mut self, event_loop: &ActiveEventLoop) {
         if let Some(canvas) = &mut self.canvas {
             canvas.reset();
             canvas.redraw();
+            self.update_circle_cursor(event_loop);
         }
+    }
+
+    fn show_new_window(&mut self, event_loop: &ActiveEventLoop) {
+        self.reset(event_loop);
         self.show_window();
     }
 
@@ -239,11 +244,8 @@ impl App {
         }
     }
 
-    pub fn show_new_window_in_current_monitor(&mut self) {
-        if let Some(canvas) = &mut self.canvas {
-            canvas.reset();
-            canvas.redraw();
-        }
+    pub fn show_new_window_in_current_monitor(&mut self, event_loop: &ActiveEventLoop) {
+        self.reset(event_loop);
         self.show_window_in_current_monitor();
     }
 
