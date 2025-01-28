@@ -132,6 +132,11 @@ impl App {
         self.window.as_ref().unwrap().request_redraw();
     }
 
+    pub fn clear_canvas(&mut self) {
+        self.canvas.as_mut().unwrap().clear();
+        self.window.as_ref().unwrap().request_redraw();
+    }
+
     pub fn resize(&mut self, width: u32, height: u32) {
         self.canvas
             .as_mut()

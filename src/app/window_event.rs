@@ -42,6 +42,10 @@ impl App {
                                 KeyCode::KeyQ => {
                                     event_loop.exit();
                                 }
+
+                                KeyCode::KeyC => {
+                                    self.clear_canvas();
+                                }
                                 _ => (),
                             }
                         }
