@@ -7,7 +7,15 @@ use winit::event_loop::EventLoopProxy;
 use crate::app::UserEvent;
 
 pub fn setup_tray_icon(proxy: &EventLoopProxy<UserEvent>) -> tray_icon::TrayIcon {
-    let menu_items: [&dyn IsMenuItem; 5] = [
+    let menu_items: [&dyn IsMenuItem; 7] = [
+        &MenuItemBuilder::new()
+            .text("Transparent to mouse")
+            .id(tray_icon::menu::MenuId::from("Transparent to mouse"))
+            .enabled(true)
+            .accelerator(Some("Ctrl+Alt+T"))
+            .unwrap()
+            .build(),
+        &PredefinedMenuItem::separator(),
         &MenuItemBuilder::new()
             .text("New canvas")
             .id(tray_icon::menu::MenuId::from("New canvas"))

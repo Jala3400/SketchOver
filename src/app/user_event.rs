@@ -19,6 +19,9 @@ impl App {
                 _ => (),
             },
             UserEvent::MenuEvent(event) => match event.id.0.as_str() {
+                "Transparent to mouse" => {
+                    self.toggle_transparent_to_mouse();
+                }
                 "New canvas" => {
                     self.show_new_window();
                 }
