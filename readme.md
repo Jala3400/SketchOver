@@ -14,6 +14,9 @@ Aún no ofrece:
 
 -   Lineas rectas, cuadrados, etc.
 -   Texto.
+-   Punter laser.
+-   Guardar el dibujo.
+-   Configuración.
 
 # Índice
 
@@ -65,7 +68,7 @@ Al pulsar este icono se mostrarán varias opciones junto con sus atajos de tecla
 -   Hide: Oculta el dibujo (Esc).
 -   Exit: Cierra la aplicación (Ctrl+Alt+Q).
 
-Además, si se hace doble click en el icono o se pulsa (Ctrl+Alt+Shift+S) se abrirá el dibujo anterior.
+Además, si se hace doble click en el icono se abrirá el dibujo anterior.
 
 Cada acción se puede llamar tanto pulsando el botón como con el atajo de teclado.
 Los atajos de teclado se deben pulsar cuando la aplicación está en primer plano, excepto el de "Show" que se puede pulsar en cualquier momento.
@@ -75,6 +78,8 @@ Los atajos de teclado se deben pulsar cuando la aplicación está en primer plan
 Para dibujar se pulsa el botón izquierdo del ratón y se arrastra.
 
 Para cambiar el radio del pincel se usa la rueda del ratón.
+
+Para limpiar el canvas pulsa Ctrl+Alt+C.
 
 ## Cambiar colores:
 
