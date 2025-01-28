@@ -205,7 +205,10 @@ impl App {
         self.show_window();
     }
 
-    fn show_window(&self) {
+    fn show_window(&mut self) {
+        if self.transparent_to_mouse {
+            self.toggle_transparent_to_mouse();
+        }
         self.set_window_visibility(true);
     }
 
@@ -249,7 +252,7 @@ impl App {
         self.show_window_in_current_monitor();
     }
 
-    pub fn show_window_in_current_monitor(&self) {
+    pub fn show_window_in_current_monitor(&mut self) {
         let position = Mouse::get_mouse_position();
         if let Some(window) = &self.window {
             if let Mouse::Position { x, y } = position {
