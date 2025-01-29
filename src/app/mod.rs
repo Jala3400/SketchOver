@@ -4,10 +4,7 @@ use crate::{
     hotkeys::HotkeyManager,
     tray_icon::setup_tray_icon,
 };
-use global_hotkey::{
-    hotkey::{Code, HotKey},
-    GlobalHotKeyEvent,
-};
+use global_hotkey::GlobalHotKeyEvent;
 use mouse_position::mouse_position::Mouse;
 use std::rc::Rc;
 use winit::{
@@ -306,13 +303,12 @@ impl App {
             // Set canvas opacity based on transparency
             canvas.set_opacity(if self.transparent_to_mouse { 127 } else { 255 });
 
-            let manager = self.hotkey_manager.get_manager();
-            let hotkey = HotKey::new(None, Code::Escape);
             if !self.transparent_to_mouse {
                 window.focus_window();
             } else {
-                manager.register(hotkey)
-                    .unwrap_or_else(|_| eprintln!("Failed to register hotkey: Esc. Go back from transparent to mouse mode to hide."));
+                if !self.hotkey_manager.setup_escape_transparent_mouse() {
+                    eprint!("Failed to setup escape key for transparent mouse");
+                }
             }
 
             let _ = window.set_cursor_hittest(!self.transparent_to_mouse);
@@ -322,9 +318,7 @@ impl App {
 
     fn escape_transparent_to_mouse(&mut self) {
         if let Some(window) = self.window.as_ref() {
-            let manager = self.hotkey_manager.get_manager();
-            let hotkey = HotKey::new(None, Code::Escape);
-            let _ = manager.unregister(hotkey);
+            self.hotkey_manager.escape_transparent_to_mouse();
             let _ = window.set_cursor_hittest(true);
             self.hide_window();
         }

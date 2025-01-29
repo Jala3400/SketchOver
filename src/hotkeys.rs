@@ -99,7 +99,25 @@ impl HotkeyManager {
         }
     }
 
-    pub fn get_manager(&self) -> &GlobalHotKeyManager {
-        &self.manager
+    pub fn setup_escape_transparent_mouse(&self) -> bool {
+        let escape_key = self
+            .hotkeys
+            .iter()
+            .find(|h| matches!(h.hotkey_event, HotkeyEvent::EscTransparentMouse))
+            .map(|h| &h.hotkey)
+            .unwrap();
+
+        self.manager.register(escape_key.clone()).is_ok()
+    }
+
+    pub fn escape_transparent_to_mouse(&self) -> bool {
+        let escape_key = self
+            .hotkeys
+            .iter()
+            .find(|h| matches!(h.hotkey_event, HotkeyEvent::EscTransparentMouse))
+            .map(|h| &h.hotkey)
+            .unwrap();
+
+        self.manager.unregister(escape_key.clone()).is_ok()
     }
 }
