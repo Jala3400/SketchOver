@@ -52,6 +52,9 @@ impl App {
                         HotkeyEvent::TransparentToMouse => {
                             self.toggle_transparent_to_mouse();
                         }
+                        HotkeyEvent::EscTransparentMouse => {
+                            self.escape_transparent_to_mouse();
+                        }
                     }
                 }
             }

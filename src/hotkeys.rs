@@ -15,6 +15,7 @@ pub enum HotkeyEvent {
     NewCanvas,
     ShowPrevious,
     TransparentToMouse,
+    EscTransparentMouse,
 }
 
 impl HotkeyAction {
@@ -36,7 +37,14 @@ pub struct HotkeyManager {
 impl HotkeyManager {
     pub fn new(proxy: &winit::event_loop::EventLoopProxy<UserEvent>) -> Self {
         let manager = GlobalHotKeyManager::new().unwrap();
-        let mut hotkeys = Vec::with_capacity(1);
+        let mut hotkeys = Vec::with_capacity(4);
+
+        // Added here because it is only activated when transparent to mouse is active
+        hotkeys.push(HotkeyAction::new(
+            "Hide".to_string(),
+            HotKey::new(None, Code::Escape),
+            HotkeyEvent::EscTransparentMouse,
+        ));
 
         // Define all hotkeys
         let possible_hotkeys = vec![
@@ -89,5 +97,9 @@ impl HotkeyManager {
         for hotkey in &self.hotkeys {
             let _ = self.manager.unregister(hotkey.hotkey);
         }
+    }
+
+    pub fn get_manager(&self) -> &GlobalHotKeyManager {
+        &self.manager
     }
 }
