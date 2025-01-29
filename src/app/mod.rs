@@ -210,6 +210,7 @@ impl App {
             self.toggle_transparent_to_mouse();
         }
         self.set_window_visibility(true);
+        self.window.as_ref().unwrap().focus_window();
     }
 
     fn hide_window(&self) {
