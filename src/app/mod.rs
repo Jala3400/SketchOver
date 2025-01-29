@@ -301,7 +301,7 @@ impl App {
             self.transparent_to_mouse = !self.transparent_to_mouse;
 
             // Set canvas opacity based on transparency
-            canvas.set_opacity(if self.transparent_to_mouse { 64 } else { 255 });
+            canvas.set_opacity(if self.transparent_to_mouse { 127 } else { 255 });
 
             if !self.transparent_to_mouse {
                 window.focus_window();
