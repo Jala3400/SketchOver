@@ -13,6 +13,7 @@ Ofrece como ventajas:
 Aún no ofrece:
 
 -   Lineas rectas, cuadrados, etc.
+-   Ctrl z.
 -   Texto.
 -   Punter laser.
 -   Guardar el dibujo.
@@ -64,7 +65,7 @@ Al pulsar este icono se mostrarán varias opciones junto con sus atajos de tecla
 
 -   Transparent to mouse: Permite usar el ratón detrás de la ventana de dibujo (Ctrl+Alt+T).
 -   New canvas: Entra en modo dibujo con un canvas en blanco (Ctrl+Alt+S).
--   Show: Entra el modo dibujo con el canvas anterior (Ctrl+Alt+Shift+S).
+-   Show: Entra el modo dibujo con el canvas anterior (Ctrl+Alt+R).
 -   Hide: Oculta el dibujo (Esc).
 -   Exit: Cierra la aplicación (Ctrl+Alt+Q).
 
@@ -91,10 +92,10 @@ Se cambian pulsando teclas:
 -   Y: Amarillo
 -   C: Cian
 -   M: Magenta
--   W: Blanco
+-   W: Blanco (La letra A también, que está más cerca del ctrl)
 -   K: Negro
 
-Si se pulsa una tecla manteniendo el Ctrl pulsado, se cambiará el color de fondo.
+Para cambiar el color de fondo se mantiene el ctrl y se pulsa la tecla del color correspondiente.
 
 Para borrar se pulsa el espacio. Si se pulsa Ctrl+espacio el color de fondo volverá a ser transparente.
 
@@ -104,7 +105,7 @@ Se puede cambiar el monitor en el que está el dibujo de varias maneras:
 
 -   Tab: Al pulsar el tabulador se cambiará el monitor en el que está manteniendo el dibujo
 -   Ctrl+Alt+S: (Borra el dibujo) Es el comando con el que se muestra la aplicación. La iniciará en el monitor en el que se esté.
--   Ctrl+Alt+Shift+S: (No borra el dibujo). Moverá la ventana al monitor correspondiente.
+-   Ctrl+Alt+R: (No borra el dibujo). Moverá la ventana al monitor correspondiente.
 
 # Otros:
 
