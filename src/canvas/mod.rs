@@ -4,6 +4,7 @@ use std::rc::Rc;
 use winit::window::Window;
 
 mod drawings;
+mod mouse_handler;
 mod surface;
 
 pub struct Canvas {
@@ -13,6 +14,8 @@ pub struct Canvas {
     mode: Mode,
     background_color: Colors,
     window_size: (i32, i32),
+    cursor_pos: (i32, i32),
+    is_clicked: bool,
 }
 
 impl Canvas {
@@ -24,6 +27,8 @@ impl Canvas {
             mode: Mode::Drawing(Colors::RED),
             background_color: Colors::TRANSPARENT,
             window_size,
+            cursor_pos: (0, 0),
+            is_clicked: false,
         }
     }
 }

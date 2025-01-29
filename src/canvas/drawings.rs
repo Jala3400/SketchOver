@@ -25,7 +25,8 @@ impl Canvas {
         }
     }
 
-    pub fn paint_line(&mut self, x0: i32, y0: i32, x1: i32, y1: i32) {
+    pub fn paint_line(&mut self, x1: i32, y1: i32) {
+        let (x0, y0) = self.cursor_pos;
         let dx = (x1 - x0).abs();
         let dy = (y1 - y0).abs();
 
