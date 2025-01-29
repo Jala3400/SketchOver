@@ -12,7 +12,7 @@ struct HotkeyAction {
 }
 
 pub enum HotkeyEvent {
-    ShowNew,
+    NewCanvas,
     ShowPrevious,
     TransparentToMouse,
 }
@@ -41,20 +41,17 @@ impl HotkeyManager {
         // Define all hotkeys
         let possible_hotkeys = vec![
             HotkeyAction::new(
-                "Show".to_string(),
+                "New canvas".to_string(),
                 HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyS),
-                HotkeyEvent::ShowNew,
+                HotkeyEvent::NewCanvas,
             ),
             HotkeyAction::new(
-                "ShowPreserved".to_string(),
-                HotKey::new(
-                    Some(Modifiers::CONTROL | Modifiers::ALT | Modifiers::SHIFT),
-                    Code::KeyS,
-                ),
+                "Show previous".to_string(),
+                HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyR),
                 HotkeyEvent::ShowPrevious,
             ),
             HotkeyAction::new(
-                "TransparentToMouse".to_string(),
+                "Transparent to mouse".to_string(),
                 HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyT),
                 HotkeyEvent::TransparentToMouse,
             ),
