@@ -210,6 +210,7 @@ impl App {
             self.toggle_transparent_to_mouse();
         }
         self.set_window_visibility(true);
+        self.window.as_ref().unwrap().focus_window();
     }
 
     fn hide_window(&self) {
@@ -300,14 +301,26 @@ impl App {
             self.transparent_to_mouse = !self.transparent_to_mouse;
 
             // Set canvas opacity based on transparency
-            canvas.set_opacity(if self.transparent_to_mouse { 64 } else { 255 });
+            canvas.set_opacity(if self.transparent_to_mouse { 127 } else { 255 });
 
             if !self.transparent_to_mouse {
                 window.focus_window();
+            } else {
+                if !self.hotkey_manager.setup_escape_transparent_mouse() {
+                    eprint!("Failed to setup escape key for transparent mouse");
+                }
             }
 
             let _ = window.set_cursor_hittest(!self.transparent_to_mouse);
             window.request_redraw();
+        }
+    }
+
+    fn escape_transparent_to_mouse(&mut self) {
+        if let Some(window) = self.window.as_ref() {
+            self.hotkey_manager.escape_transparent_to_mouse();
+            let _ = window.set_cursor_hittest(true);
+            self.hide_window();
         }
     }
 }

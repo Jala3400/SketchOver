@@ -27,7 +27,7 @@ pub fn setup_tray_icon(proxy: &EventLoopProxy<UserEvent>) -> tray_icon::TrayIcon
             .text("Show previous")
             .id(tray_icon::menu::MenuId::from("Show previous"))
             .enabled(true)
-            .accelerator(Some("Ctrl+Alt+Shift+S"))
+            .accelerator(Some("Ctrl+Alt+R"))
             .unwrap()
             .build(),
         &MenuItemBuilder::new()
