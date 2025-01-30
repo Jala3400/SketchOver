@@ -1,4 +1,4 @@
-use super::{App, Colors, Mode};
+use super::{App, Colors};
 use winit::{
     event::{ElementState, KeyEvent, WindowEvent},
     event_loop::ActiveEventLoop,
@@ -101,35 +101,35 @@ impl App {
                             }
 
                             KeyCode::KeyR => {
-                                self.set_mode(event_loop, Mode::Drawing(Colors::RED));
+                                self.set_current_color(event_loop, Colors::RED);
                             }
 
                             KeyCode::KeyG => {
-                                self.set_mode(event_loop, Mode::Drawing(Colors::GREEN));
+                                self.set_current_color(event_loop, Colors::GREEN);
                             }
 
                             KeyCode::KeyB => {
-                                self.set_mode(event_loop, Mode::Drawing(Colors::BLUE));
+                                self.set_current_color(event_loop, Colors::BLUE);
                             }
 
                             KeyCode::KeyY => {
-                                self.set_mode(event_loop, Mode::Drawing(Colors::YELLOW));
+                                self.set_current_color(event_loop, Colors::YELLOW);
                             }
 
                             KeyCode::KeyC => {
-                                self.set_mode(event_loop, Mode::Drawing(Colors::CYAN));
+                                self.set_current_color(event_loop, Colors::CYAN);
                             }
 
                             KeyCode::KeyM => {
-                                self.set_mode(event_loop, Mode::Drawing(Colors::MAGENTA));
+                                self.set_current_color(event_loop, Colors::MAGENTA);
                             }
 
                             KeyCode::KeyW => {
-                                self.set_mode(event_loop, Mode::Drawing(Colors::WHITE));
+                                self.set_current_color(event_loop, Colors::WHITE);
                             }
 
                             KeyCode::KeyK | KeyCode::KeyA => {
-                                self.set_mode(event_loop, Mode::Drawing(Colors::BLACK));
+                                self.set_current_color(event_loop, Colors::BLACK);
                             }
 
                             KeyCode::Space => {

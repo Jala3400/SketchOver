@@ -1,5 +1,5 @@
 use super::Canvas;
-use crate::app::Mode;
+use crate::app::{Colors, Mode};
 
 impl Canvas {
     pub fn resize_radius(&mut self, delta: f64) {
@@ -8,6 +8,14 @@ impl Canvas {
 
     pub fn get_radius(&self) -> f64 {
         self.radius
+    }
+
+    pub fn set_current_color(&mut self, color: Colors) {
+        self.current_color = color;
+    }
+
+    pub fn get_current_color(&self) -> u32 {
+        self.current_color as u32
     }
 
     pub fn set_mode(&mut self, mode: Mode) {
@@ -20,8 +28,8 @@ impl Canvas {
 
     pub fn toggle_mode(&mut self) {
         match self.mode {
-            Mode::Drawing(color) => self.mode = Mode::Erasing(color),
-            Mode::Erasing(color) => self.mode = Mode::Drawing(color),
+            Mode::Drawing => self.mode = Mode::Erasing,
+            Mode::Erasing => self.mode = Mode::Drawing,
         }
     }
 
@@ -89,8 +97,8 @@ impl Canvas {
             let start_x = (y * self.window_size.0 + x1.max(0).min(width - 1)) as usize;
             let end_x = (y * self.window_size.0 + x2.max(0).min(width - 1)) as usize;
 
-            let (drawing_color, buffer_color) = if let Mode::Drawing(color) = self.mode {
-                (color as u32, color as u32)
+            let (drawing_color, buffer_color) = if let Mode::Drawing = self.mode {
+                (self.current_color as u32, self.current_color as u32)
             } else {
                 (0, self.background_color as u32)
             };

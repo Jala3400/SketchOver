@@ -43,8 +43,8 @@ pub enum Colors {
 
 #[derive(Debug, Clone, Copy)]
 pub enum Mode {
-    Drawing(Colors),
-    Erasing(Colors),
+    Drawing,
+    Erasing,
 }
 
 pub struct App {
@@ -87,14 +87,14 @@ impl App {
         if let Some(canvas) = &self.canvas {
             let mode = canvas.get_mode();
             let radius = canvas.get_radius();
-            if let Mode::Drawing(color) = mode {
+            if let Mode::Drawing = mode {
                 self.window
                     .as_ref()
                     .unwrap()
                     .set_cursor(winit::window::Cursor::Custom(color_circle_cursor(
                         event_loop,
                         radius as i32,
-                        color as u32,
+                        canvas.get_current_color() as u32,
                     )));
             } else {
                 self.window
@@ -111,6 +111,11 @@ impl App {
     fn resize_radius(&mut self, event_loop: &ActiveEventLoop, delta: f64) {
         self.canvas.as_mut().unwrap().resize_radius(delta);
         self.update_circle_cursor(event_loop);
+    }
+
+    fn set_current_color(&mut self, event_loop: &ActiveEventLoop, color: Colors) {
+        self.canvas.as_mut().unwrap().set_current_color(color);
+        self.set_mode(event_loop, Mode::Drawing);
     }
 
     fn set_mode(&mut self, event_loop: &ActiveEventLoop, mode: Mode) {

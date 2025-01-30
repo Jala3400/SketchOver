@@ -64,7 +64,8 @@ impl Canvas {
 
     pub fn reset(&mut self) {
         if let Ok(mut buffer) = self.surface.buffer_mut() {
-            self.mode = Mode::Drawing(Colors::RED);
+            self.mode = Mode::Drawing;
+            self.current_color = Colors::RED;
             self.radius = 2.0;
             buffer.fill(0);
             self.drawing.fill(0);
