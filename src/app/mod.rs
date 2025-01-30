@@ -121,11 +121,13 @@ impl App {
     fn set_mode(&mut self, event_loop: &ActiveEventLoop, mode: Mode) {
         self.canvas.as_mut().unwrap().set_mode(mode);
         self.update_circle_cursor(event_loop);
+        self.window.as_ref().unwrap().request_redraw();
     }
 
     fn toggle_mode(&mut self, event_loop: &ActiveEventLoop) {
         self.canvas.as_mut().unwrap().toggle_mode();
         self.update_circle_cursor(event_loop);
+        self.window.as_ref().unwrap().request_redraw();
     }
 
     fn set_backgroudn_color(&mut self, color: Colors) {
@@ -159,7 +161,10 @@ impl App {
     }
 
     pub fn mouse_pressed(&mut self, state: ElementState, button: MouseButton) {
-        self.canvas.as_mut().unwrap().mouse_pressed(state, button);
+        self.canvas
+            .as_mut()
+            .unwrap()
+            .mouse_pressed(state, button, self.modifiers);
         self.window.as_ref().unwrap().request_redraw();
     }
 

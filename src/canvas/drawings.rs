@@ -1,4 +1,4 @@
-use super::Canvas;
+use super::{Canvas, Preview};
 use crate::app::{Colors, Mode};
 
 impl Canvas {
@@ -30,6 +30,16 @@ impl Canvas {
         match self.mode {
             Mode::Drawing => self.mode = Mode::Erasing,
             Mode::Erasing => self.mode = Mode::Drawing,
+        }
+        if let Preview::Line(_, _) = self.preview {
+            self.update_line_preview(self.cursor_pos.0, self.cursor_pos.1);
+        }
+    }
+
+    pub fn get_drawing_color(&self) -> u32 {
+        match self.mode {
+            Mode::Drawing => self.current_color as u32,
+            Mode::Erasing => self.background_color as u32,
         }
     }
 
