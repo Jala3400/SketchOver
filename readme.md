@@ -82,6 +82,8 @@ Para cambiar el radio del pincel se usa la rueda del ratón.
 
 Para limpiar el canvas pulsa Ctrl+Alt+C.
 
+Para dibujar líenas rectas se debe mantener Shift pulsado mientras se dibuja.
+
 ## Cambiar colores:
 
 Se cambian pulsando teclas:
