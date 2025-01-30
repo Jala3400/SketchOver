@@ -1,6 +1,13 @@
 use super::{Canvas, Preview};
 
 impl Canvas {
+    pub fn update_preview(&mut self) {
+        match self.preview {
+            Preview::Line(_, _) => self.update_line_preview(self.cursor_pos.0, self.cursor_pos.1),
+            Preview::None => {}
+        }
+    }
+
     pub fn update_line_preview(&mut self, x1: i32, y1: i32) {
         self.delete_line_preview();
         self.paint_line_preview(x1, y1);

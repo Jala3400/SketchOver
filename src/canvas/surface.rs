@@ -85,6 +85,7 @@ impl Canvas {
                         color
                     };
                 });
+            self.update_preview();
         }
     }
 
