@@ -1,7 +1,12 @@
-use super::Canvas;
+use super::{Canvas, Preview};
 use crate::app::{Colors, Mode};
 
 impl Canvas {
+    pub fn hide(&mut self) {
+        self.is_clicked = false;
+        self.preview = Preview::None;
+    }
+
     pub fn clear(&mut self) {
         if let Ok(mut buffer) = self.surface.buffer_mut() {
             self.drawing.iter_mut().for_each(|x| *x = 0);

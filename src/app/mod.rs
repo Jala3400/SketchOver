@@ -189,7 +189,10 @@ impl App {
         self.window.as_ref().unwrap().focus_window();
     }
 
-    fn hide_window(&self) {
+    fn hide_window(&mut self) {
+        if let Some(canvas) = &mut self.canvas {
+            canvas.hide();
+        }
         self.set_window_visibility(false);
     }
 
