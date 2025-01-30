@@ -12,6 +12,7 @@ impl Canvas {
 
     pub fn set_current_color(&mut self, color: Colors) {
         self.current_color = color;
+        self.update_preview();
     }
 
     pub fn get_current_color(&self) -> u32 {
