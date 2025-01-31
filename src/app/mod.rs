@@ -111,11 +111,12 @@ impl App {
     fn resize_radius(&mut self, event_loop: &ActiveEventLoop, delta: f64) {
         self.canvas.as_mut().unwrap().resize_radius(delta);
         self.update_circle_cursor(event_loop);
+        self.window.as_ref().unwrap().request_redraw();
     }
 
     fn set_current_color(&mut self, event_loop: &ActiveEventLoop, color: Colors) {
         self.canvas.as_mut().unwrap().set_current_color(color);
-        self.set_mode(event_loop, Mode::Drawing);
+        self.set_mode(event_loop, Mode::Drawing); // Set mode requests redraw
     }
 
     fn set_mode(&mut self, event_loop: &ActiveEventLoop, mode: Mode) {

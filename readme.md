@@ -12,7 +12,7 @@ Ofrece como ventajas:
 
 Aún no ofrece:
 
--   Lineas rectas, cuadrados, etc.
+-   Cuadrados, etc.
 -   Ctrl z.
 -   Texto.
 -   Punter laser.
