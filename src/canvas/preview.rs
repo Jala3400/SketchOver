@@ -13,7 +13,7 @@ impl Canvas {
         self.paint_line_preview(x1, y1);
     }
 
-    fn delete_line_preview(&mut self) {
+    pub fn delete_line_preview(&mut self) {
         if let Preview::Line(x0, y0) = self.preview {
             let (x1, y1) = self.cursor_pos;
             let dx = (x1 - x0).abs();
@@ -91,7 +91,7 @@ impl Canvas {
         }
     }
 
-    fn paint_line_preview(&mut self, x1: i32, y1: i32) {
+    pub fn paint_line_preview(&mut self, x1: i32, y1: i32) {
         if let Preview::Line(x0, y0) = self.preview {
             let dx = (x1 - x0).abs();
             let dy = (y1 - y0).abs();
