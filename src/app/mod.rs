@@ -43,8 +43,8 @@ pub enum Colors {
 
 #[derive(Debug, Clone, Copy)]
 pub enum Mode {
-    Drawing(Colors),
-    Erasing(Colors),
+    Drawing,
+    Erasing,
 }
 
 pub struct App {
@@ -54,8 +54,6 @@ pub struct App {
     hotkey_manager: HotkeyManager,
     _proxy: EventLoopProxy<UserEvent>,
     attributes: WindowAttributes,
-    cursor_pos: (i32, i32),
-    is_clicked: bool,
     tab_pressed: bool,
     transparent_to_mouse: bool,
     modifiers: winit::keyboard::ModifiersState,
@@ -78,8 +76,6 @@ impl App {
                 .with_skip_taskbar(true)
                 .with_visible(false)
                 .with_window_level(winit::window::WindowLevel::AlwaysOnTop),
-            cursor_pos: (0, 0),
-            is_clicked: false,
             tab_pressed: false,
             transparent_to_mouse: false,
             modifiers: winit::keyboard::ModifiersState::empty(),
@@ -91,14 +87,14 @@ impl App {
         if let Some(canvas) = &self.canvas {
             let mode = canvas.get_mode();
             let radius = canvas.get_radius();
-            if let Mode::Drawing(color) = mode {
+            if let Mode::Drawing = mode {
                 self.window
                     .as_ref()
                     .unwrap()
                     .set_cursor(winit::window::Cursor::Custom(color_circle_cursor(
                         event_loop,
                         radius as i32,
-                        color as u32,
+                        canvas.get_current_color() as u32,
                     )));
             } else {
                 self.window
@@ -115,16 +111,24 @@ impl App {
     fn resize_radius(&mut self, event_loop: &ActiveEventLoop, delta: f64) {
         self.canvas.as_mut().unwrap().resize_radius(delta);
         self.update_circle_cursor(event_loop);
+        self.window.as_ref().unwrap().request_redraw();
+    }
+
+    fn set_current_color(&mut self, event_loop: &ActiveEventLoop, color: Colors) {
+        self.canvas.as_mut().unwrap().set_current_color(color);
+        self.set_mode(event_loop, Mode::Drawing); // Set mode requests redraw
     }
 
     fn set_mode(&mut self, event_loop: &ActiveEventLoop, mode: Mode) {
         self.canvas.as_mut().unwrap().set_mode(mode);
         self.update_circle_cursor(event_loop);
+        self.window.as_ref().unwrap().request_redraw();
     }
 
     fn toggle_mode(&mut self, event_loop: &ActiveEventLoop) {
         self.canvas.as_mut().unwrap().toggle_mode();
         self.update_circle_cursor(event_loop);
+        self.window.as_ref().unwrap().request_redraw();
     }
 
     fn set_backgroudn_color(&mut self, color: Colors) {
@@ -146,50 +150,23 @@ impl App {
     }
 
     pub fn cursor_moved(&mut self, x: f64, y: f64) {
-        let x = x as i32;
-        let y = y as i32;
-        if self.is_clicked {
-            let now = std::time::Instant::now();
-            let elapsed = now - self.last_paint_time;
+        let now = std::time::Instant::now();
+        let elapsed = now - self.last_paint_time;
 
-            // Throttle paint
-            if elapsed.as_millis() >= 7 {
-                self.canvas.as_mut().unwrap().paint_line(
-                    self.cursor_pos.0,
-                    self.cursor_pos.1,
-                    x,
-                    y,
-                );
-                self.window.as_ref().unwrap().request_redraw();
-                self.last_paint_time = now;
-                self.cursor_pos = (x, y);
-            }
-        } else {
-            self.cursor_pos = (x, y);
+        // Throttle paint
+        if elapsed.as_millis() >= 7 {
+            self.canvas.as_mut().unwrap().cursor_moved(x, y);
+            self.window.as_ref().unwrap().request_redraw();
+            self.last_paint_time = now;
         }
     }
 
     pub fn mouse_pressed(&mut self, state: ElementState, button: MouseButton) {
-        if state == ElementState::Pressed {
-            match button {
-                MouseButton::Left => {
-                    self.is_clicked = true;
-                    self.canvas
-                        .as_mut()
-                        .unwrap()
-                        .paint_circle(self.cursor_pos.0 as i32, self.cursor_pos.1 as i32);
-                    self.window.as_ref().unwrap().request_redraw();
-                }
-                _ => (),
-            }
-        } else {
-            match button {
-                MouseButton::Left => {
-                    self.is_clicked = false;
-                }
-                _ => (),
-            }
-        }
+        self.canvas
+            .as_mut()
+            .unwrap()
+            .mouse_pressed(state, button, self.modifiers);
+        self.window.as_ref().unwrap().request_redraw();
     }
 
     fn reset(&mut self, event_loop: &ActiveEventLoop) {
@@ -210,9 +187,13 @@ impl App {
             self.toggle_transparent_to_mouse();
         }
         self.set_window_visibility(true);
+        self.window.as_ref().unwrap().focus_window();
     }
 
-    fn hide_window(&self) {
+    fn hide_window(&mut self) {
+        if let Some(canvas) = &mut self.canvas {
+            canvas.hide();
+        }
         self.set_window_visibility(false);
     }
 
@@ -300,14 +281,26 @@ impl App {
             self.transparent_to_mouse = !self.transparent_to_mouse;
 
             // Set canvas opacity based on transparency
-            canvas.set_opacity(if self.transparent_to_mouse { 64 } else { 255 });
+            canvas.set_opacity(if self.transparent_to_mouse { 127 } else { 255 });
 
             if !self.transparent_to_mouse {
                 window.focus_window();
+            } else {
+                if !self.hotkey_manager.setup_escape_transparent_mouse() {
+                    eprint!("Failed to setup escape key for transparent mouse");
+                }
             }
 
             let _ = window.set_cursor_hittest(!self.transparent_to_mouse);
             window.request_redraw();
+        }
+    }
+
+    fn escape_transparent_to_mouse(&mut self) {
+        if let Some(window) = self.window.as_ref() {
+            self.hotkey_manager.escape_transparent_to_mouse();
+            let _ = window.set_cursor_hittest(true);
+            self.hide_window();
         }
     }
 }

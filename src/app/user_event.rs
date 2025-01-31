@@ -43,7 +43,7 @@ impl App {
 
                     // Then execute the action
                     match hotkey_event {
-                        HotkeyEvent::ShowNew => {
+                        HotkeyEvent::NewCanvas => {
                             self.show_new_window_in_current_monitor(event_loop);
                         }
                         HotkeyEvent::ShowPrevious => {
@@ -51,6 +51,9 @@ impl App {
                         }
                         HotkeyEvent::TransparentToMouse => {
                             self.toggle_transparent_to_mouse();
+                        }
+                        HotkeyEvent::EscTransparentMouse => {
+                            self.escape_transparent_to_mouse();
                         }
                     }
                 }

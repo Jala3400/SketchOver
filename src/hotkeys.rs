@@ -12,9 +12,10 @@ struct HotkeyAction {
 }
 
 pub enum HotkeyEvent {
-    ShowNew,
+    NewCanvas,
     ShowPrevious,
     TransparentToMouse,
+    EscTransparentMouse,
 }
 
 impl HotkeyAction {
@@ -36,25 +37,29 @@ pub struct HotkeyManager {
 impl HotkeyManager {
     pub fn new(proxy: &winit::event_loop::EventLoopProxy<UserEvent>) -> Self {
         let manager = GlobalHotKeyManager::new().unwrap();
-        let mut hotkeys = Vec::with_capacity(1);
+        let mut hotkeys = Vec::with_capacity(4);
+
+        // Added here because it is only activated when transparent to mouse is active
+        hotkeys.push(HotkeyAction::new(
+            "Hide".to_string(),
+            HotKey::new(None, Code::Escape),
+            HotkeyEvent::EscTransparentMouse,
+        ));
 
         // Define all hotkeys
         let possible_hotkeys = vec![
             HotkeyAction::new(
-                "Show".to_string(),
+                "New canvas".to_string(),
                 HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyS),
-                HotkeyEvent::ShowNew,
+                HotkeyEvent::NewCanvas,
             ),
             HotkeyAction::new(
-                "ShowPreserved".to_string(),
-                HotKey::new(
-                    Some(Modifiers::CONTROL | Modifiers::ALT | Modifiers::SHIFT),
-                    Code::KeyS,
-                ),
+                "Show previous".to_string(),
+                HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyR),
                 HotkeyEvent::ShowPrevious,
             ),
             HotkeyAction::new(
-                "TransparentToMouse".to_string(),
+                "Transparent to mouse".to_string(),
                 HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyT),
                 HotkeyEvent::TransparentToMouse,
             ),
@@ -92,5 +97,27 @@ impl HotkeyManager {
         for hotkey in &self.hotkeys {
             let _ = self.manager.unregister(hotkey.hotkey);
         }
+    }
+
+    pub fn setup_escape_transparent_mouse(&self) -> bool {
+        let escape_key = self
+            .hotkeys
+            .iter()
+            .find(|h| matches!(h.hotkey_event, HotkeyEvent::EscTransparentMouse))
+            .map(|h| &h.hotkey)
+            .unwrap();
+
+        self.manager.register(escape_key.clone()).is_ok()
+    }
+
+    pub fn escape_transparent_to_mouse(&self) -> bool {
+        let escape_key = self
+            .hotkeys
+            .iter()
+            .find(|h| matches!(h.hotkey_event, HotkeyEvent::EscTransparentMouse))
+            .map(|h| &h.hotkey)
+            .unwrap();
+
+        self.manager.unregister(escape_key.clone()).is_ok()
     }
 }
