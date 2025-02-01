@@ -9,9 +9,11 @@ mod preview;
 mod surface;
 
 #[derive(PartialEq)]
+// It is either none or they contain the coordinates where it was clicked
 pub enum Preview {
-    None,
     Line(i32, i32),
+    Square(i32, i32),
+    None,
 }
 
 pub struct Canvas {

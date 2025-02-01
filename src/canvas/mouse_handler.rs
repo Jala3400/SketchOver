@@ -9,6 +9,7 @@ impl Canvas {
         if self.is_clicked {
             match self.preview {
                 Preview::Line(_, _) => self.update_line_preview(x, y),
+                Preview::Square(_, _) => self.update_square_preview(x, y),
                 Preview::None => self.paint_line(x, y),
             }
         }
@@ -25,11 +26,16 @@ impl Canvas {
             match button {
                 MouseButton::Left => {
                     self.is_clicked = true;
-                    if modifiers == winit::keyboard::ModifiersState::SHIFT {
-                        self.preview = Preview::Line(self.cursor_pos.0, self.cursor_pos.1);
-                    } else {
-                        self.preview = Preview::None;
-                        self.paint_circle(self.cursor_pos.0 as i32, self.cursor_pos.1 as i32);
+                    match modifiers {
+                        winit::keyboard::ModifiersState::SHIFT => {
+                            self.preview = Preview::Line(self.cursor_pos.0, self.cursor_pos.1);
+                        }
+                        winit::keyboard::ModifiersState::CONTROL => {
+                            self.preview = Preview::Square(self.cursor_pos.0, self.cursor_pos.1);
+                        }
+                        _ => {
+                            self.paint_circle(self.cursor_pos.0 as i32, self.cursor_pos.1 as i32);
+                        }
                     }
                 }
                 _ => (),
@@ -37,10 +43,16 @@ impl Canvas {
         } else {
             match button {
                 MouseButton::Left => {
-                    if let Preview::Line(x, y) = self.preview {
-                        self.paint_line(x, y);
-                        self.preview = Preview::None;
+                    match self.preview {
+                        Preview::Line(x, y) => {
+                            self.paint_line(x, y);
+                        }
+                        Preview::Square(x, y) => {
+                            self.paint_square(x, y);
+                        }
+                        _ => (),
                     }
+                    self.preview = Preview::None;
                     self.is_clicked = false;
                 }
                 _ => (),
