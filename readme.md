@@ -1,117 +1,130 @@
-# Sketch Over
+# Sketch Over 🎨
 
-Es una aplicación usada para dibujar encima de la pantalla. Está inspirada en la aplicación para windows ["ZoomIt"](https://docs.microsoft.com/en-us/sysinternals/downloads/zoomit) de Microsoft. Solo la parte de dibujar.
+**Sketch Over** es una aplicación usada para dibujar encima de la pantalla. Está inspirada en la aplicación para windows ["ZoomIt"](https://docs.microsoft.com/en-us/sysinternals/downloads/zoomit) de Microsoft. Solo la parte de dibujar.
 
 Ofrece como ventajas:
 
--   Se ve actualizarse la pantalla de detrás.
--   Se puede borrar.
--   Se puede conservar el dibujo después de ocultarlo (no después de cerrar la aplicación).
--   Se puede cambiar el color del fondo sin borrar lo dibujado.
--   Opción de usar el mouse tras el canvas mientras se está dibujando (la ventana es transparente al mouse).
+-   **Pantalla actualizada en tiempo real**: El fondo se actualiza mientras dibujas.
+-   **Borrar dibujo**: Puedes borrar lo dibujado en cualquier momento.
+-   **Conserva el dibujo**: El último dibujo se mantiene al ocultar la aplicación (pero no después de cerrar la aplicación).
+-   **Cambio de fondo sin perder dibujo**: Puedes cambiar el color de fondo sin borrar lo dibujado.
+-   **Uso transparente del ratón**: Puedes usar el ratón detrás del canvas mientras dibujas (la ventana es transparente al ratón).
 
 Aún no ofrece:
 
--   Ctrl z.
--   Texto.
--   Punter laser.
--   Guardar el dibujo.
--   Configuración.
+-   **Ctrl+Z**: Deshacer.
+-   **Añadir texto**.
+-   **Puntero láser**.
+-   **Guardar el dibujo**.
+-   **Configuración personalizada**.
 
-# Índice
+# 📝 Índice
 
-- [Sketch Over](#sketch-over)
-- [Índice](#índice)
-- [Instalación](#instalación)
-- [Uso](#uso)
-  - [Inicio:](#inicio)
-  - [Dibujar:](#dibujar)
-  - [Cambiar colores:](#cambiar-colores)
-  - [Cambiar monitores:](#cambiar-monitores)
-- [Otros:](#otros)
+- [Sketch Over](#sketch-over-)
+- [Índice](#-índice)
+- [Instalación](#-instalación)
+  - [Prerrequisitos:](#prerrequisitos)
+  - [Pasos:](#pasos)
+- [Uso](#️-uso)
+  - [Inicio](#inicio)
+  - [Dibujar](#️-dibujar)
+  - [Cambiar colores](#-cambiar-colores)
+  - [Cambiar monitores](#-cambiar-monitores)
+- [Otros](#️-otros)
 
-# Instalación
+# 🔧 Instalación
 
--   Prerrequisitos:
+## Prerrequisitos:
 
-    -   [Rust](https://www.rust-lang.org/tools/install)
-    -   [Git](https://git-scm.com/downloads)
+Antes de empezar, asegúrate de tener instalados los siguientes programas:
 
--   Pasos:
+-   [**Rust**](https://www.rust-lang.org/)
+-   [**Git**](https://git-scm.com/)
 
-1. Descarga este repositorio con:
-    ```
+## Pasos:
+
+1. **Clona este repositorio**:
+   Abre la terminal y ejecuta:
+
+    ```bash
     git clone https://github.com/Jala3400/SketchOver
     ```
-2. Compila el repositorio: En la consola de comandos ejecuta
-    ```
+
+2. **Compila el repositorio**:
+   Entra en la carpeta del repositorio y ejecuta:
+    ```bash
     cargo build --release
     ```
 
-# Uso
+# 🖥️ Uso
 
-## Inicio:
+## Inicio
 
--   Para iniciar la aplicación ejecuta:
+Para iniciar la aplicación, ejecuta:
 
-    ```
-    cargo run --release
-    ```
+```bash
+cargo run --release
+```
 
-Esto iniciará la aplicación en segundo plano, por lo que se verá un icono de un lápiz en la barra de tareas.
+Esto iniciará la aplicación en segundo plano, y se verá un ícono de lápiz en la barra de tareas.
 
-Al pulsar este icono se mostrarán varias opciones junto con sus atajos de teclado:
+Al hacer clic en el icono se mostrará un menú con las siguientes opciones junto con sus atajos de teclado:
 
--   Transparent to mouse: Permite usar el ratón detrás de la ventana de dibujo (Ctrl+Alt+T).
--   New canvas: Entra en modo dibujo con un canvas en blanco (Ctrl+Alt+S).
--   Show: Entra el modo dibujo con el canvas anterior (Ctrl+Alt+R).
--   Hide: Oculta el dibujo (Esc).
--   Exit: Cierra la aplicación (Ctrl+Alt+Q).
+-   **Transparent to mouse**: Permite usar el ratón detrás de la ventana de dibujo.  
+    _Atajo:_ **Ctrl+Alt+T**
 
-Además, si se hace doble click en el icono se abrirá el dibujo anterior.
+-   **New canvas**: Abre un canvas en blanco para empezar a dibujar.  
+    _Atajo:_ **Ctrl+Alt+S**
 
-Cada acción se puede llamar tanto pulsando el botón como con el atajo de teclado.
-Los atajos de teclado se deben pulsar cuando la aplicación está en primer plano, excepto el de "Show" que se puede pulsar en cualquier momento.
+-   **Show**: Muestra el canvas anterior.  
+    _Atajo:_ **Ctrl+Alt+R**
 
-## Dibujar:
+-   **Hide**: Oculta el dibujo.  
+    _Atajo:_ **Esc**
 
-Para dibujar se pulsa el botón izquierdo del ratón y se arrastra.
+-   **Exit**: Cierra la aplicación.  
+    _Atajo:_ **Ctrl+Alt+Q**
 
-Para cambiar el radio del pincel se usa la rueda del ratón.
+**Extra**: Si haces doble clic en el ícono del lápiz, se abrirá el dibujo anterior.
 
-Para limpiar el canvas pulsa Ctrl+Alt+C.
+> **Nota**: Los atajos de teclado solo funcionan cuando la aplicación está en primer plano, excepto el atajo de "Show", que se puede usar en cualquier momento.
 
-Para dibujar líenas rectas se debe mantener Shift pulsado mientras se dibuja.
+## ✏️ Dibujar
 
-Para dibujar cuadrados se debe mantener Ctrl pulsado mientras se dibuja.
+-   **Para dibujar**: Se mantiene presionado el botón izquierdo del ratón y arrastra.
+-   **Para cambiar el tamaño del pincel**: Se usa la rueda del ratón.
+-   **Para limpiar el canvas**: Se pulsa **Ctrl+Alt+C**.
+-   **Para dibujar líneas rectas**: Se mantiene presionado **Shift** mientras se dibuja.
+-   **Para dibujar cuadrados**: Se mantiene presionado **Ctrl** mientras se dibuja.
 
-## Cambiar colores:
+## 🎨 Cambiar colores
 
-Se cambian pulsando teclas:
+Presiona las siguientes teclas para cambiar el color del pincel:
 
--   R: Rojo
--   G: Verde
--   B: Azul
--   Y: Amarillo
--   C: Cian
--   M: Magenta
--   W: Blanco (La letra A también, que está más cerca del ctrl)
--   K: Negro
+-   **R**: Rojo
+-   **G**: Verde
+-   **B**: Azul
+-   **Y**: Amarillo
+-   **C**: Cian
+-   **M**: Magenta
+-   **W**: Blanco
+-   **K**: Negro (La letra A también, que está más cerca del ctrl)
 
-Para cambiar el color de fondo se mantiene el ctrl y se pulsa la tecla del color correspondiente.
+**Para cambiar el color de fondo**:
+Se mantiene presionado **Ctrl** y pulsa la tecla del color que desees.
 
-Para borrar se pulsa el espacio. Si se pulsa Ctrl+espacio el color de fondo volverá a ser transparente.
+**Para borrar**:
+Se pulsa **Espacio** para usar la goma. Si se presiona **Ctrl+Espacio**, el fondo se volverá transparente.
 
-## Cambiar monitores:
+## 💻 Cambiar monitores
 
-Se puede cambiar el monitor en el que está el dibujo de varias maneras:
+Se puede cambiar el monitor en el que se muestra el dibujo de varias formas:
 
--   Tab: Al pulsar el tabulador se cambiará el monitor en el que está manteniendo el dibujo
--   Ctrl+Alt+S: (Borra el dibujo) Es el comando con el que se muestra la aplicación. La iniciará en el monitor en el que se esté.
--   Ctrl+Alt+R: (No borra el dibujo). Moverá la ventana al monitor correspondiente.
+-   **Tab**: Cambia el monitor en el que está el dibujo.
+-   **Ctrl+Alt+S**: Muestra la aplicación en el monitor actual, pero borrará el dibujo.
+-   **Ctrl+Alt+R**: Mueve la ventana al monitor correspondiente, manteniendo el dibujo.
 
-# Otros:
+# ⚙️ Otros
 
-Hay aplicaciones (como youtube o compartir pantalla en discord) que dejarán de actualizarse si están completamente cubiertas por el canvas.
-
-El canvas tiene un márgen de 1 pixel por cada lado, por lo que si la aplicación toca un borde no debería haber problemas.
+Algunas aplicaciones como YouTube o Discord (compartir pantalla) dejarán de actualizarse si están completamente cubiertas por el canvas.
+El canvas tiene un margen de 1 píxel por cada lado, por lo que si la aplicación toca un borde, no debería haber problemas.
