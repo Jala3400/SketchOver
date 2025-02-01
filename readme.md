@@ -12,7 +12,6 @@ Ofrece como ventajas:
 
 Aún no ofrece:
 
--   Cuadrados, etc.
 -   Ctrl z.
 -   Texto.
 -   Punter laser.
@@ -83,6 +82,8 @@ Para cambiar el radio del pincel se usa la rueda del ratón.
 Para limpiar el canvas pulsa Ctrl+Alt+C.
 
 Para dibujar líenas rectas se debe mantener Shift pulsado mientras se dibuja.
+
+Para dibujar cuadrados se debe mantener Ctrl pulsado mientras se dibuja.
 
 ## Cambiar colores:
 

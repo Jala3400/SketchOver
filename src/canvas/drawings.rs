@@ -3,9 +3,9 @@ use crate::app::{Colors, Mode};
 
 impl Canvas {
     pub fn resize_radius(&mut self, delta: f64) {
-        self.delete_line_preview();
+        self.delete_preview();
         self.radius = (self.radius + delta).max(1.0).min(20.0);
-        self.paint_line_preview(self.cursor_pos.0, self.cursor_pos.1);
+        self.paint_preview();
     }
 
     pub fn get_radius(&self) -> f64 {
@@ -34,8 +34,8 @@ impl Canvas {
             Mode::Drawing => self.mode = Mode::Erasing,
             Mode::Erasing => self.mode = Mode::Drawing,
         }
-        if let Preview::Line(_, _) = self.preview {
-            self.update_line_preview(self.cursor_pos.0, self.cursor_pos.1);
+        if self.preview != Preview::None {
+            self.update_preview();
         }
     }
 
