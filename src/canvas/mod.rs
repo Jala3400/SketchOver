@@ -20,8 +20,8 @@ pub enum Preview {
 pub struct Canvas {
     drawing: Vec<u32>,
     surface: Surface<Rc<Window>, Rc<Window>>,
-    history : Vec<Vec<u32>>,
-    max_history : usize,
+    history: Vec<Vec<(u32, u32)>>,
+    max_history: usize,
     radius: f64, // It is needed as f64 to be able to change the size
     mode: Mode,
     preview: Preview,
@@ -38,7 +38,7 @@ impl Canvas {
             drawing: vec![0; (window_size.0 * window_size.1) as usize],
             surface: surface,
             history: Vec::with_capacity(40),
-            max_history: 40,
+            max_history: 1000,
             radius: 2.0,
             mode: Mode::Drawing,
             preview: Preview::None,
