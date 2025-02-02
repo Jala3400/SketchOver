@@ -78,7 +78,7 @@ impl Canvas {
         }
     }
 
-    fn rerender(&mut self) {
+    pub fn rerender(&mut self) {
         if let Ok(mut buffer) = self.surface.buffer_mut() {
             buffer
                 .iter_mut()

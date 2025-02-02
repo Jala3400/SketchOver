@@ -149,6 +149,11 @@ impl App {
         self.window.as_ref().unwrap().request_redraw();
     }
 
+    pub fn undo(&mut self) {
+        self.canvas.as_mut().unwrap().undo();
+        self.window.as_ref().unwrap().request_redraw();
+    }
+
     pub fn cursor_moved(&mut self, x: f64, y: f64) {
         let now = std::time::Instant::now();
         let elapsed = now - self.last_paint_time;

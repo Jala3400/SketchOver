@@ -26,6 +26,7 @@ impl Canvas {
             match button {
                 MouseButton::Left => {
                     self.is_clicked = true;
+                    self.save_state();
                     match modifiers {
                         winit::keyboard::ModifiersState::SHIFT => {
                             self.preview = Preview::Line(self.cursor_pos.0, self.cursor_pos.1);
