@@ -37,7 +37,7 @@ impl Canvas {
         Canvas {
             drawing: vec![0; (window_size.0 * window_size.1) as usize],
             surface: surface,
-            history: Vec::with_capacity(40),
+            history: Vec::with_capacity(1000),
             max_history: 1000,
             radius: 2.0,
             mode: Mode::Drawing,
