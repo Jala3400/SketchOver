@@ -25,7 +25,6 @@ impl Canvas {
         if state == ElementState::Pressed {
             match button {
                 MouseButton::Left => {
-                    self.save_state();
                     self.is_clicked = true;
                     match modifiers {
                         winit::keyboard::ModifiersState::SHIFT => {
@@ -35,6 +34,10 @@ impl Canvas {
                             self.preview = Preview::Square(self.cursor_pos.0, self.cursor_pos.1);
                         }
                         _ => {
+                            // Only save state if we are not previewing a shape
+                            // It will be saved when the shape is drawn
+                            // This is to prevent issues when pressing ctrl z while previewing
+                            self.save_state();
                             self.paint_circle(self.cursor_pos.0 as i32, self.cursor_pos.1 as i32);
                         }
                     }
@@ -46,9 +49,11 @@ impl Canvas {
                 MouseButton::Left => {
                     match self.preview {
                         Preview::Line(x, y) => {
+                            self.save_state();
                             self.paint_line(x, y);
                         }
                         Preview::Square(x, y) => {
+                            self.save_state();
                             self.paint_square(x, y);
                         }
                         _ => (),
