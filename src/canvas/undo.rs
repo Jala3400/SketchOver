@@ -1,4 +1,4 @@
-use super::Canvas;
+use super::{Canvas, Preview};
 
 impl Canvas {
     pub fn undo(&mut self) {
@@ -12,6 +12,10 @@ impl Canvas {
             self.rerender();
         } else {
             self.clear();
+        }
+
+        if self.is_clicked && self.preview == Preview::None {
+            self.save_state();
         }
     }
 
