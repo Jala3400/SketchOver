@@ -54,7 +54,10 @@ impl App {
                             KeyCode::KeyZ => {
                                 self.undo();
                             }
+                            _ => (),
+                        },
 
+                        ModifiersState::SHIFT => match key_code {
                             KeyCode::KeyR => {
                                 self.set_backgroudn_color(Colors::RED);
                             }
