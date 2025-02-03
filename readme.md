@@ -12,7 +12,6 @@ Ofrece como ventajas:
 
 Aún no ofrece:
 
--   **Ctrl+Z**: Deshacer.
 -   **Añadir texto**.
 -   **Puntero láser**.
 -   **Guardar el dibujo**.
@@ -96,6 +95,7 @@ Al hacer clic en el icono se mostrará un menú con las siguientes opciones junt
 -   **Para limpiar el canvas**: Se pulsa **Ctrl+Alt+C**.
 -   **Para dibujar líneas rectas**: Se mantiene presionado **Shift** mientras se dibuja.
 -   **Para dibujar cuadrados**: Se mantiene presionado **Ctrl** mientras se dibuja.
+-   **Para deshacer**: Se pulsa **Ctrl+Z**.
 
 ## 🎨 Cambiar colores
 
@@ -111,7 +111,7 @@ Presiona las siguientes teclas para cambiar el color del pincel:
 -   **K**: Negro (La letra A también, que está más cerca del ctrl)
 
 **Para cambiar el color de fondo**:
-Se mantiene presionado **Ctrl** y pulsa la tecla del color que desees.
+Se mantiene presionado **Shift** y pulsa la tecla del color que desees.
 
 **Para borrar**:
 Se pulsa **Espacio** para usar la goma. Si se presiona **Ctrl+Espacio**, el fondo se volverá transparente.
