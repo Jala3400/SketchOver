@@ -191,6 +191,7 @@ impl App {
         if self.transparent_to_mouse {
             self.toggle_transparent_to_mouse();
         }
+        self.canvas.as_mut().unwrap().rerender();
         self.set_window_visibility(true);
         self.window.as_ref().unwrap().focus_window();
     }
