@@ -54,6 +54,10 @@ impl App {
                             KeyCode::KeyZ => {
                                 self.undo();
                             }
+
+                            KeyCode::KeyY => {
+                                self.redo();
+                            }
                             _ => (),
                         },
 
