@@ -96,6 +96,7 @@ Al hacer clic en el icono se mostrará un menú con las siguientes opciones junt
 -   **Para dibujar líneas rectas**: Se mantiene presionado **Shift** mientras se dibuja.
 -   **Para dibujar cuadrados**: Se mantiene presionado **Ctrl** mientras se dibuja.
 -   **Para deshacer**: Se pulsa **Ctrl+Z**.
+-   **Para rehacer**: Se pulsa **Ctrl+Y**.
 
 ## 🎨 Cambiar colores
 
