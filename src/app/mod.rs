@@ -149,6 +149,16 @@ impl App {
         self.window.as_ref().unwrap().request_redraw();
     }
 
+    pub fn undo(&mut self) {
+        self.canvas.as_mut().unwrap().undo();
+        self.window.as_ref().unwrap().request_redraw();
+    }
+
+    pub fn redo(&mut self) {
+        self.canvas.as_mut().unwrap().redo();
+        self.window.as_ref().unwrap().request_redraw();
+    }
+
     pub fn cursor_moved(&mut self, x: f64, y: f64) {
         let now = std::time::Instant::now();
         let elapsed = now - self.last_paint_time;
@@ -186,6 +196,7 @@ impl App {
         if self.transparent_to_mouse {
             self.toggle_transparent_to_mouse();
         }
+        self.canvas.as_mut().unwrap().rerender();
         self.set_window_visibility(true);
         self.window.as_ref().unwrap().focus_window();
     }

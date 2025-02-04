@@ -8,6 +8,7 @@ impl Canvas {
     }
 
     pub fn clear(&mut self) {
+        self.save_state();
         if let Ok(mut buffer) = self.surface.buffer_mut() {
             self.drawing.iter_mut().for_each(|x| *x = 0);
             buffer
@@ -75,10 +76,13 @@ impl Canvas {
             buffer.fill(0);
             self.drawing.fill(0);
             self.background_color = Colors::TRANSPARENT;
+            self.preview = Preview::None;
+            self.undo_history.clear();
+            self.redo_history.clear();
         }
     }
 
-    fn rerender(&mut self) {
+    pub fn rerender(&mut self) {
         if let Ok(mut buffer) = self.surface.buffer_mut() {
             buffer
                 .iter_mut()
