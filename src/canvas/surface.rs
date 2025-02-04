@@ -76,6 +76,9 @@ impl Canvas {
             buffer.fill(0);
             self.drawing.fill(0);
             self.background_color = Colors::TRANSPARENT;
+            self.preview = Preview::None;
+            self.undo_history.clear();
+            self.redo_history.clear();
         }
     }
 
