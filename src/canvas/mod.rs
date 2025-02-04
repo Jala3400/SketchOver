@@ -7,6 +7,7 @@ mod drawings;
 mod mouse_handler;
 mod preview;
 mod surface;
+mod undo;
 
 #[derive(PartialEq)]
 // It is either none or they contain the coordinates where it was clicked
@@ -19,6 +20,9 @@ pub enum Preview {
 pub struct Canvas {
     drawing: Vec<u32>,
     surface: Surface<Rc<Window>, Rc<Window>>,
+    undo_history: Vec<Vec<(u32, u32)>>,
+    redo_history: Vec<Vec<(u32, u32)>>,
+    max_history: usize,
     radius: f64, // It is needed as f64 to be able to change the size
     mode: Mode,
     preview: Preview,
@@ -34,6 +38,9 @@ impl Canvas {
         Canvas {
             drawing: vec![0; (window_size.0 * window_size.1) as usize],
             surface: surface,
+            undo_history: Vec::with_capacity(1000),
+            redo_history: Vec::with_capacity(1000),
+            max_history: 1000,
             radius: 2.0,
             mode: Mode::Drawing,
             preview: Preview::None,
