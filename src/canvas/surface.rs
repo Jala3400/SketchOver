@@ -8,6 +8,7 @@ impl Canvas {
     }
 
     pub fn clear(&mut self) {
+        self.save_state();
         if let Ok(mut buffer) = self.surface.buffer_mut() {
             self.drawing.iter_mut().for_each(|x| *x = 0);
             buffer
