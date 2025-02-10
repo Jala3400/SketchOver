@@ -67,44 +67,6 @@ impl Canvas {
             buffer[start_x..end_x].fill(drawing_color);
         }
     }
-}
-
-impl Canvas {
-    pub fn update_line_preview(&mut self, x1: i32, y1: i32) {
-        self.delete_line_preview();
-        self.paint_line_preview(x1, y1);
-    }
-
-    fn delete_line_preview(&mut self) {
-        if let Preview::Line(x0, y0) = self.preview {
-            let (x1, y1) = self.cursor_pos;
-            let dx = (x1 - x0).abs();
-            let dy = (y1 - y0).abs();
-
-            let sx = if x0 < x1 { 1 } else { -1 };
-            let sy = if y0 < y1 { 1 } else { -1 };
-
-            let mut err = dx - dy;
-            let mut x = x0;
-            let mut y = y0;
-
-            while x != x1 || y != y1 {
-                self.delete_circle_preview(x, y);
-
-                let e2 = 2 * err;
-
-                if e2 > -dy {
-                    err -= dy;
-                    x += sx;
-                }
-
-                if e2 < dx {
-                    err += dx;
-                    y += sy;
-                }
-            }
-        }
-    }
 
     fn delete_circle_preview(&mut self, center_x: i32, center_y: i32) {
         let radius = self.radius as i32;
@@ -152,11 +114,69 @@ impl Canvas {
                 });
         }
     }
+}
 
-    fn paint_line_preview(&mut self, x1: i32, y1: i32) {
+impl Canvas {
+    pub fn update_line_preview(&mut self, x1: i32, y1: i32) {
+        self.delete_line_preview();
+        self.paint_line_preview(x1, y1);
+    }
+
+    fn delete_line_preview(&mut self) {
         if let Preview::Line(x0, y0) = self.preview {
-            let dx = (x1 - x0).abs();
-            let dy = (y1 - y0).abs();
+            let (mut x1, mut y1) = self.cursor_pos;
+            let mut dx = (x1 - x0).abs();
+            let mut dy = (y1 - y0).abs();
+
+            if dx < 10 {
+                dx = 0;
+                x1 = x0;
+            }
+
+            if dy < 10 {
+                dy = 0;
+                y1 = y0;
+            }
+
+            let sx = if x0 < x1 { 1 } else { -1 };
+            let sy = if y0 < y1 { 1 } else { -1 };
+
+            let mut err = dx - dy;
+            let mut x = x0;
+            let mut y = y0;
+
+            while x != x1 || y != y1 {
+                self.delete_circle_preview(x, y);
+
+                let e2 = 2 * err;
+
+                if e2 > -dy {
+                    err -= dy;
+                    x += sx;
+                }
+
+                if e2 < dx {
+                    err += dx;
+                    y += sy;
+                }
+            }
+        }
+    }
+
+    fn paint_line_preview(&mut self, mut x1: i32, mut y1: i32) {
+        if let Preview::Line(x0, y0) = self.preview {
+            let mut dx = (x1 - x0).abs();
+            let mut dy = (y1 - y0).abs();
+
+            if dx < 10 {
+                dx = 0;
+                x1 = x0;
+            }
+
+            if dy < 10 {
+                dy = 0;
+                y1 = y0;
+            }
 
             let sx = if x0 < x1 { 1 } else { -1 };
             let sy = if y0 < y1 { 1 } else { -1 };
@@ -178,6 +198,44 @@ impl Canvas {
                     err += dx;
                     y += sy;
                 }
+            }
+        }
+    }
+
+    pub fn commit_line_preview(&mut self, x0: i32, y0: i32) {
+        let (mut x1, mut y1) = self.cursor_pos;
+        let mut dx = (x1 - x0).abs();
+        let mut dy = (y1 - y0).abs();
+
+        if dx < 10 {
+            dx = 0;
+            x1 = x0;
+        }
+
+        if dy < 10 {
+            dy = 0;
+            y1 = y0;
+        }
+
+        let sx = if x0 < x1 { 1 } else { -1 };
+        let sy = if y0 < y1 { 1 } else { -1 };
+
+        let mut err = dx - dy;
+        let mut x = x0;
+        let mut y = y0;
+
+        while x != x1 || y != y1 {
+            self.paint_circle(x, y);
+            let e2 = 2 * err;
+
+            if e2 > -dy {
+                err -= dy;
+                x += sx;
+            }
+
+            if e2 < dx {
+                err += dx;
+                y += sy;
             }
         }
     }
@@ -228,7 +286,7 @@ impl Canvas {
         }
     }
 
-    pub fn paint_square(&mut self, x1: i32, y1: i32) {
+    pub fn commit_square_preview(&mut self, x1: i32, y1: i32) {
         let (x0, y0) = self.cursor_pos;
         let x_min = x0.min(x1);
         let x_max = x0.max(x1);
