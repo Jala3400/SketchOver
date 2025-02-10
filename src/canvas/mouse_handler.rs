@@ -50,11 +50,11 @@ impl Canvas {
                     match self.preview {
                         Preview::Line(x, y) => {
                             self.save_state();
-                            self.paint_line(x, y);
+                            self.commit_line_preview(x, y);
                         }
                         Preview::Square(x, y) => {
                             self.save_state();
-                            self.paint_square(x, y);
+                            self.commit_square_preview(x, y);
                         }
                         _ => (),
                     }
