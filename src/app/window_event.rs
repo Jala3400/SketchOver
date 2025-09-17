@@ -94,6 +94,34 @@ impl App {
                                 self.set_backgroudn_color(Colors::BLACK);
                             }
 
+                            KeyCode::KeyO => {
+                                self.set_backgroudn_color(Colors::ORANGE);
+                            }
+
+                            KeyCode::KeyP => {
+                                self.set_backgroudn_color(Colors::PURPLE);
+                            }
+
+                            KeyCode::KeyI => {
+                                self.set_backgroudn_color(Colors::PINK);
+                            }
+
+                            KeyCode::KeyN => {
+                                self.set_backgroudn_color(Colors::BROWN);
+                            }
+
+                            KeyCode::KeyH => {
+                                self.set_backgroudn_color(Colors::GRAY);
+                            }
+
+                            KeyCode::KeyV => {
+                                self.set_backgroudn_color(Colors::NAVY);
+                            }
+
+                            KeyCode::KeyT => {
+                                self.set_backgroudn_color(Colors::TEAL);
+                            }
+
                             KeyCode::Space => {
                                 self.set_backgroudn_color(Colors::TRANSPARENT);
                             }
@@ -141,6 +169,34 @@ impl App {
 
                             KeyCode::KeyK | KeyCode::KeyA => {
                                 self.set_current_color(event_loop, Colors::BLACK);
+                            }
+
+                            KeyCode::KeyO => {
+                                self.set_current_color(event_loop, Colors::ORANGE);
+                            }
+
+                            KeyCode::KeyP => {
+                                self.set_current_color(event_loop, Colors::PURPLE);
+                            }
+
+                            KeyCode::KeyI => {
+                                self.set_current_color(event_loop, Colors::PINK);
+                            }
+
+                            KeyCode::KeyN => {
+                                self.set_current_color(event_loop, Colors::BROWN);
+                            }
+
+                            KeyCode::KeyH => {
+                                self.set_current_color(event_loop, Colors::GRAY);
+                            }
+
+                            KeyCode::KeyV => {
+                                self.set_current_color(event_loop, Colors::NAVY);
+                            }
+
+                            KeyCode::KeyT => {
+                                self.set_current_color(event_loop, Colors::TEAL);
                             }
 
                             KeyCode::Space => {
