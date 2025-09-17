@@ -38,6 +38,13 @@ pub enum Colors {
     MAGENTA = 0xffff00ff,
     WHITE = 0xffffffff,
     BLACK = 0xff000000,
+    ORANGE = 0xffff7500,
+    PURPLE = 0xff800080,
+    PINK = 0xffff909b,
+    BROWN = 0xff8b4513,
+    GRAY = 0xff808080,
+    NAVY = 0xff000080,
+    TEAL = 0xff008080,
     TRANSPARENT = 0x00000000,
 }
 
